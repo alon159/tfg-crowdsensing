@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+    <!--tools:showIn="@layout/fragment_friend_list"-->
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:weightSum="5"
+        android:layout_margin="10dp">
+
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="5dp"
+            android:src="@drawable/ic_adb_color_24dp"
+            android:layout_weight="2"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:layout_weight="1">
+
+            <TextView
+                android:id="@+id/lblemail"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="3dp"
+                android:lines="1"
+                android:maxLines="1"
+                android:text="apvereda@gmail.com"
+                android:textAlignment="textStart"
+                android:textSize="15dp" />
+
+            <TextView
+                android:id="@+id/lblid"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="10dp"
+                android:text="XXX-XXX-XXX-XXX"
+                android:textIsSelectable="true"
+                android:textAlignment="textStart"
+                android:textSize="12dp" />
+        </LinearLayout>
+        <ImageButton
+            android:id="@+id/btndelete"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:src="@drawable/ic_delete_black_24dp"
+            android:contentDescription="Delete"
+            android:background="@drawable/roundcorner"
+            android:layout_weight="2"/>
+    </LinearLayout>
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="2dp"
+        android:layout_marginRight="20dp"
+        android:background="@color/colorPrimary"
+        android:layout_marginLeft="20dp" />
+</LinearLayout>
