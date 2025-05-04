@@ -5,10 +5,9 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.BLUETOOTH" />
-    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_REMOTE_MESSAGING"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"
+        android:maxSdkVersion="32" />
     <uses-permission android:name="android.permission.INTERNET" />
 
     <uses-feature
@@ -30,6 +29,8 @@
         <meta-data
             android:name="com.google.android.awareness.API_KEY"
             android:value="" />
+        <meta-data android:name="com.onesignal.NotificationServiceExtension"
+            android:value="org.wso2.extension.siddhi.io.android.source.MessageHandler" />
         <activity
             android:name=".ui.pollsList.MySubscriptionsFragment"
             android:exported="true"
@@ -45,18 +46,10 @@
             android:exported="true"
             android:label="@string/title_activity_sensorsim"
             android:theme="@style/AppTheme.NoActionBar" />
-        <!--
-activity
-            android:name=".ui.copsnrobbers.ResultTripsFragment"
-            android:label="@string/title_activity_sensorsim"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:exported="true"></activity
-        -->
+
         <activity
             android:name=".DrawerActivity"
             android:exported="true"
-            android:label="@string/app_name"
-            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -68,19 +61,13 @@ activity
         <service
             android:name="org.wso2.siddhi.android.platform.SiddhiAppService"
             android:enabled="true"
-            android:exported="true">
+            android:exported="true"
+            android:foregroundServiceType="remoteMessaging"
+            android:permission="TODO">
             <intent-filter>
                 <action android:name="org.wso2.siddhiappservice.AIDL" />
 
                 <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-        </service>
-        <service
-            android:name="org.wso2.extension.siddhi.io.android.source.MessageHandler"
-            android:exported="true"
-            android:permission="android.permission.BIND_JOB_SERVICE">
-            <intent-filter>
-                <action android:name="com.onesignal.NotificationExtender" />
             </intent-filter>
         </service>
         <service

@@ -1,13 +1,10 @@
 package com.apvereda.digitalavatars.ui.home;
 
-import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.RemoteException;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -17,6 +14,7 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
 
@@ -24,7 +22,6 @@ import com.apvereda.digitalavatars.DrawerActivity;
 import com.apvereda.digitalavatars.R;
 import com.apvereda.digitalavatars.ui.pollsList.MySubscriptionsFragment;
 import com.apvereda.receiver.PollsReceiver;
-import com.apvereda.utils.AmazonSNS;
 import com.apvereda.utils.SiddhiService;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
@@ -68,16 +65,8 @@ public class HomeFragment extends Fragment {
                 root.findViewById(R.id.fabstop).setVisibility(View.VISIBLE);
             }
         }
-        /*new Thread(new Runnable(){
-            @Override
-            public void run() {
-                AmazonSNS.getAmazonSNS("").listSubscriptions();
-            }
-        }).start();*/
         apps = new ArrayList<String>();
         appnames = new ArrayList<String>();
-        //AmazonSNS.getAmazonSNS("").listSubscriptions();
-        //SiddhiService.getServiceConnection(getActivity().getApplicationContext());
         Button subscriptions = root.findViewById(R.id.subscriptionsbtn);
         subscriptions.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -200,7 +189,7 @@ public class HomeFragment extends Fragment {
         pollsReceiver = new PollsReceiver();
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction("receivePollResponse");
-        SiddhiAppService.getServiceInstance().registerReceiver(pollsReceiver, intentFilter);
+        SiddhiAppService.getServiceInstance().registerReceiver(pollsReceiver, intentFilter, Context.RECEIVER_NOT_EXPORTED);
         /*
         beaconHandler = BeaconHandler.getInstance();
         beaconHandler.setParentReceiverActivity(getActivity());

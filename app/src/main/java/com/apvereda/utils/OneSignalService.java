@@ -2,30 +2,38 @@ package com.apvereda.utils;
 
 import android.content.Context;
 import android.util.Log;
+import com.apvereda.digitalavatars.BuildConfig;
 
 import com.apvereda.db.Contact;
-import com.couchbase.lite.Document;
-import com.onesignal.OSPermissionSubscriptionState;
+import com.onesignal.Continue;
 import com.onesignal.OneSignal;
+import com.onesignal.debug.LogLevel;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.wso2.extension.siddhi.io.android.source.MessageHandler;
-import org.wso2.siddhi.android.platform.SiddhiAppService;
 
-import java.util.ArrayList;
-import java.util.Iterator;
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
+
 import java.util.List;
 
 public class OneSignalService {
     public static Context context;
-
+    private final static String ONESIGNAL_API_URL = "https://api.onesignal.com/notifications?c=push";
+    private final static String ONESIGNAL_APP_ID = BuildConfig.ONESIGNAL_APP_ID;
+    private final static String ONESIGNAL_API_KEY = BuildConfig.ONESIGNAL_API_KEY;
     public static void initialize(Context context){
-        OneSignal.startInit(context)
-                .inFocusDisplaying(OneSignal.OSInFocusDisplayOption.Notification)
-                .unsubscribeWhenNotificationsAreDisabled(true)
-                //.setNotificationReceivedHandler(new MessageHandler())
-                .init();
+        // Enable verbose logging for debugging (remove in production)
+        OneSignal.getDebug().setLogLevel(LogLevel.VERBOSE);
+        // Initialize with your OneSignal App ID
+        OneSignal.initWithContext(context, ONESIGNAL_APP_ID);
+        // Use this method to prompt for push notifications.
+        // We recommend removing this method after testing and instead use In-App Messages to prompt for notification permission.
+        OneSignal.getNotifications().requestPermission(false, Continue.none());
     }
 
     public static void postMessage(String title, String text, String data, String recipients){
@@ -48,15 +56,15 @@ public class OneSignalService {
             //Iterator<String> it = doc.iterator();
             if(rec.length() > 0) {
                 rec.substring(0, rec.length() - 1);
-                JSONObject notificationContent = new JSONObject(
-                        "{" +
-                                "'contents': {'en': '" + text + "'}," +
-                                "'include_player_ids': [" + rec + "], " +
-                                "'headings': {'en': '" + title + "'}, " +
-                                "'data': " + data +
-                                "}");
+                JSONObject notificationContent = new JSONObject();
+                notificationContent.put("app_id", ONESIGNAL_APP_ID);
+                notificationContent.put("contents", new JSONObject().put("en", text));
+                notificationContent.put("include_aliases", new JSONObject().put("onesignal_id", new JSONArray(rec)));
+                notificationContent.put("target_channel", "push");
+                notificationContent.put("headings", new JSONObject().put("en", title));
+                notificationContent.put("data", new JSONObject(data));
                 Log.i("Message sent", notificationContent.toString());
-                OneSignal.postNotification(notificationContent, null);
+                postNotification(notificationContent);
             }
         } catch (JSONException e) {
             e.printStackTrace();
@@ -64,10 +72,34 @@ public class OneSignalService {
     }
 
     public static String getUserID(){
-        OSPermissionSubscriptionState status = OneSignal.getPermissionSubscriptionState();
-        String userId = status.getSubscriptionStatus().getUserId();
-        boolean isSubscribed = status.getSubscriptionStatus().getSubscribed();
+        boolean isSubscribed = OneSignal.getNotifications().getPermission();
+        String userId = OneSignal.getUser().getOnesignalId();
         Log.i("OneSignalExample", "Subscription Status, is subscribed:" + isSubscribed);
         return isSubscribed ?  userId :  null;
+    }
+
+    private static void postNotification(JSONObject jsonBody) {
+        new Thread(() -> {
+            try {
+                OkHttpClient client = new OkHttpClient();
+
+                RequestBody body = RequestBody.create(
+                        MediaType.parse("application/json; charset=utf-8"),
+                        jsonBody.toString()
+                );
+
+                Request request = new Request.Builder()
+                        .url(ONESIGNAL_API_URL)
+                        .addHeader("Authorization", "Key " + ONESIGNAL_API_KEY)
+                        .post(body)
+                        .build();
+
+                Response response = client.newCall(request).execute();
+                System.out.println("OneSignal Response: " + response.body().string());
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }).start();
     }
 }

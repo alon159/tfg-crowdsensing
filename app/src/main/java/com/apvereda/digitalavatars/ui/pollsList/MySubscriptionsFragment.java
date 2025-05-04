@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.ListView;
 
-import com.amazonaws.services.sns.model.Subscription;
 import com.apvereda.db.AbstractEntity;
 import com.apvereda.db.Entity;
 import com.apvereda.digitalavatars.R;
@@ -23,7 +22,6 @@ public class MySubscriptionsFragment extends AppCompatActivity {
     SubscriptionsAdapter adapter;
     ListView list;
     List<AbstractEntity> surveys;
-    List<Subscription> subscriptions;
 
 
     protected void onCreate(Bundle savedInstanceState) {

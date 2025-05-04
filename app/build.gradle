@@ -8,22 +8,27 @@ antlr4 {
     extraArgs = ['-package', 'org.wso2.siddhi.query.compiler']
     output = project.file("src/main/java/org/wso2/siddhi/query/compiler")
 }
+def localProperties = new Properties()
+def localPropertiesFile = rootProject.file("local.properties")
+if (localPropertiesFile.exists()) {
+    localProperties.load(new FileInputStream(localPropertiesFile))
+}
+
+def onesignal_app_id = localProperties['ONESIGNAL_APP_ID'] ?: ""
+def onesignal_api_key = localProperties['ONESIGNAL_API_KEY'] ?: ""
 
 android {
-    compileSdkVersion 31
+    compileSdk 35
     defaultConfig {
         applicationId "com.apvereda.da"
-        manifestPlaceholders = [
-                onesignal_app_id               : 'XXX',
-                // Project number pulled from dashboard, local value is ignored.
-                onesignal_google_project_number: 'REMOTE'
-        ]
-        minSdkVersion 22//19
-        targetSdkVersion 30
+        minSdkVersion 33
+        targetSdkVersion 35
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
+        buildConfigField "String", "ONESIGNAL_APP_ID", "\"${onesignal_app_id}\""
+        buildConfigField "String", "ONESIGNAL_API_KEY", "\"${onesignal_api_key}\""
         //android.defaultConfig.javaCompileOptions.annotationProcessorOptions.includeCompileClasspath = true
     }
     buildTypes {
@@ -38,22 +43,20 @@ android {
         targetCompatibility JavaVersion.VERSION_17
     }
     packagingOptions {
-        //añadido
-        exclude 'META-INF/LICENSE.txt'
-        exclude 'META-INF/NOTICE.txt'
-        merge 'META-INF/DEPENDENCIES'
-        merge 'META-INF/annotations/org.wso2.siddhi.annotation.Extension'
-        //añadido hasta aqui
-        /*resources {
-            merges += ['META-INF/annotations/org.wso2.siddhi.annotation.Extension']
-            pickFirsts += ['META-INF/LICENSE', 'META-INF/DEPENDENCIES']
-        }*/
+        resources {
+            merges += ['META-INF/DEPENDENCIES', 'META-INF/annotations/org.wso2.siddhi.annotation.Extension']
+            excludes += ['META-INF/LICENSE.txt', 'META-INF/NOTICE.txt']
+        }
     }
     lint {
         disable 'InvalidPackage'
     }
 
     namespace 'com.apvereda.digitalavatars'
+    buildFeatures {
+        aidl true
+        buildConfig true
+    }
 
 }
 
@@ -133,18 +136,15 @@ dependencies {
     //implementation "org.antlr:antlr4-runtime:4.5.1"
     //implementation 'com.couchbase.lite:couchbase-lite-android:2.7.0'
     implementation 'com.couchbase.lite:couchbase-lite-android:3.0.0'
-    implementation platform('com.google.firebase:firebase-bom:29.2.0')
-    implementation 'com.google.firebase:firebase-analytics:17.2.2'
-    implementation 'com.google.firebase:firebase-messaging:23.0.2'
-    implementation 'com.google.firebase:firebase-core:17.0.0'
-    implementation 'com.onesignal:OneSignal:[3.11.2, 3.99.99]'
-    implementation "com.google.firebase:firebase-auth:17.0.0"
+    implementation platform('com.google.firebase:firebase-bom:33.13.0')
+    implementation 'com.google.firebase:firebase-analytics'
+    implementation 'com.google.firebase:firebase-messaging'
+    implementation 'com.onesignal:OneSignal:[5.1.6, 5.1.99]'
+    implementation 'com.google.firebase:firebase-auth'
     implementation 'com.google.android.gms:play-services-auth:17.0.0'
-    implementation 'com.firebaseui:firebase-ui-auth:4.3.1'
+    implementation 'com.firebaseui:firebase-ui-auth:9.0.0'
+    implementation 'com.google.code.gson:gson:2.13.1'
 
-
-    implementation 'com.amazonaws:aws-android-sdk-core:2.42.0'
-    implementation 'com.amazonaws:aws-android-sdk-sns:2.42.0'
     //implementation "com.amazonaws:aws-java-sdk-sns:1.11.238"
     //implementation 'software.amazon.awssdk:url-connection-client:2.13.49'
     //implementation 'software.amazon.awssdk:sns:2.13.49'

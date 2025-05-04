@@ -29,7 +29,6 @@ import android.util.Log;
 
 import com.apvereda.digitalavatars.DrawerActivity;
 import com.apvereda.digitalavatars.R;
-import com.apvereda.utils.AmazonSNS;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 import com.google.gson.Gson;
@@ -141,7 +140,6 @@ public class FCMSensorHandler extends FirebaseMessagingService {
         // manage this apps subscriptions on the server side, send the
         // FCM registration token to your app server.
         sendRegistrationToServer(token);
-        AmazonSNS.getAmazonSNS(token); //Corregir para que se vuelva a registrar
     }
     // [END on_new_token]
 /*
@@ -184,13 +182,13 @@ public class FCMSensorHandler extends FirebaseMessagingService {
         Intent intent = new Intent(this, DrawerActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, intent,
-                PendingIntent.FLAG_ONE_SHOT);
+                PendingIntent.FLAG_MUTABLE);
 
         String channelId = getString(R.string.default_notification_channel_id);
         Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         NotificationCompat.Builder notificationBuilder =
                 new NotificationCompat.Builder(this, channelId)
-                        .setSmallIcon(R.drawable.icon_with_gradient)
+                        .setSmallIcon(R.drawable.icon)
                         .setContentTitle("Sensor Notication Received")
                         .setContentText(messageBody)
                         .setAutoCancel(true)

@@ -1,5 +1,6 @@
 package com.apvereda.digitalavatars;
 
+import android.Manifest;
 import android.app.AlertDialog;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -22,7 +23,6 @@ import com.apvereda.digitalavatars.ui.friendslist.MyFriendsFragment;
 import com.apvereda.digitalavatars.ui.addfriend.AddFriendFragment;
 import com.apvereda.digitalavatars.ui.home.HomeFragment;
 import com.apvereda.digitalavatars.ui.profile.ProfileFragment;
-import com.apvereda.utils.AmazonSNS;
 import com.apvereda.utils.DigitalAvatar;
 import com.apvereda.utils.OneSignalService;
 import com.apvereda.utils.SiddhiService;
@@ -34,7 +34,8 @@ import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GetTokenResult;
-import com.google.firebase.messaging.FirebaseMessaging;
+import com.firebase.ui.auth.FirebaseAuthUIActivityResultContract;
+import com.firebase.ui.auth.data.model.FirebaseAuthUIAuthenticationResult;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -56,6 +57,8 @@ import androidx.navigation.ui.AppBarConfiguration;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -172,15 +175,12 @@ public class DrawerActivity extends AppCompatActivity {
         int locationPermission = ContextCompat.checkSelfPermission(this,
                 android.Manifest.permission.ACCESS_COARSE_LOCATION);
         List<String> listPermissionsNeeded = new ArrayList<>();
-        if (locationPermission != PackageManager.PERMISSION_GRANTED) {
+        if (locationPermission != PackageManager.PERMISSION_GRANTED)
             listPermissionsNeeded.add(android.Manifest.permission.ACCESS_COARSE_LOCATION);
-        }
-        if (permissionReadStorage != PackageManager.PERMISSION_GRANTED) {
+        if (permissionReadStorage != PackageManager.PERMISSION_GRANTED)
             listPermissionsNeeded.add(android.Manifest.permission.READ_EXTERNAL_STORAGE);
-        }
-        if (permissionWriteStorage != PackageManager.PERMISSION_GRANTED) {
+        if (permissionWriteStorage != PackageManager.PERMISSION_GRANTED)
             listPermissionsNeeded.add(android.Manifest.permission.WRITE_EXTERNAL_STORAGE);
-        }
         if (!listPermissionsNeeded.isEmpty()) {
             ActivityCompat.requestPermissions(this, listPermissionsNeeded.toArray(new String[listPermissionsNeeded.size()]),REQUEST_ID_MULTIPLE_PERMISSIONS);
             return false;
@@ -192,21 +192,22 @@ public class DrawerActivity extends AppCompatActivity {
     @Override
     public void onRequestPermissionsResult(int requestCode,
                                            String permissions[], int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         switch (requestCode) {
             case REQUEST_ID_MULTIPLE_PERMISSIONS: {
                 Map<String, Integer> perms = new HashMap<>();
                 // Initialize the map with both permissions
-                perms.put(android.Manifest.permission.READ_EXTERNAL_STORAGE, PackageManager.PERMISSION_GRANTED);
-                perms.put(android.Manifest.permission.ACCESS_COARSE_LOCATION, PackageManager.PERMISSION_GRANTED);
-                perms.put(android.Manifest.permission.WRITE_EXTERNAL_STORAGE, PackageManager.PERMISSION_GRANTED);
+                perms.put(Manifest.permission.READ_EXTERNAL_STORAGE, PackageManager.PERMISSION_GRANTED);
+                perms.put(Manifest.permission.ACCESS_COARSE_LOCATION, PackageManager.PERMISSION_GRANTED);
+                perms.put(Manifest.permission.WRITE_EXTERNAL_STORAGE, PackageManager.PERMISSION_GRANTED);
                 // Fill with actual results from user
                 if (grantResults.length > 0) {
                     for (int i = 0; i < permissions.length; i++)
                         perms.put(permissions[i], grantResults[i]);
                     // Check for both permissions
-                    if (perms.get(android.Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
-                            && perms.get(android.Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED
-                            && perms.get(android.Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+                    if (perms.get(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
+                            && perms.get(Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED
+                            && perms.get(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
                         Log.d("DA-Permissions", "sms & location services permission granted");
                         // process the normal flow
                         //else any one or both the permissions are not granted
@@ -215,9 +216,9 @@ public class DrawerActivity extends AppCompatActivity {
                         //permission is denied (this is the first time, when "never ask again" is not checked) so ask again explaining the usage of permission
 //                        // shouldShowRequestPermissionRationale will return true
                         //show the dialog or snackbar saying its necessary and try again otherwise proceed with setup.
-                        if (ActivityCompat.shouldShowRequestPermissionRationale(this, android.Manifest.permission.READ_EXTERNAL_STORAGE) ||
-                                ActivityCompat.shouldShowRequestPermissionRationale(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) ||
-                                ActivityCompat.shouldShowRequestPermissionRationale(this, android.Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                        if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.READ_EXTERNAL_STORAGE) ||
+                                ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_COARSE_LOCATION) ||
+                                ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.WRITE_EXTERNAL_STORAGE))  {
                             showDialogOK("SMS and Location Services Permission required for this app",
                                     new DialogInterface.OnClickListener() {
                                         @Override
@@ -270,44 +271,50 @@ public class DrawerActivity extends AppCompatActivity {
         navigationView.getMenu().findItem(R.id.nav_home).setChecked(true);
     }
 
+    private final ActivityResultLauncher<Intent> signInLauncher = registerForActivityResult(
+            new FirebaseAuthUIActivityResultContract(),
+            new ActivityResultCallback<FirebaseAuthUIAuthenticationResult>() {
+                @Override
+                public void onActivityResult(FirebaseAuthUIAuthenticationResult result) {
+                    onSignInResult(result);
+                }
+            }
+    );
+
     private void firebaseLogin() {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        if (user == null) {
+        if (user != null)
+            logUser();
+        else{
             List<AuthUI.IdpConfig> providers = Arrays.asList(
                     new AuthUI.IdpConfig.EmailBuilder().build(),
                     new AuthUI.IdpConfig.PhoneBuilder().build(),
                     new AuthUI.IdpConfig.GoogleBuilder().build());
             // Create and launch sign-in intent
-            startActivityForResult(
-                    AuthUI.getInstance()
-                            .createSignInIntentBuilder()
-                            .setAvailableProviders(providers)
-                            .build(),
-                    123);
-        } else {
-            logUser();
+            Intent signInIntent = AuthUI.getInstance()
+                    .createSignInIntentBuilder()
+                    .setAvailableProviders(providers)
+                    .build();
+            signInLauncher.launch(signInIntent);
         }
 
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == 123) {
-            IdpResponse response = IdpResponse.fromResultIntent(data);
-            if (resultCode == RESULT_OK) {
-                // Successfully signed in
-                logUser();
-            } else {
-                Log.i("Digital Avatar", "Log in fallido");
-                if(response == null){
-                    Log.i("Digital Avatar", "User cancelled sing in flow pressing back button");
-                }else {
-                    Log.i("Digital Avatar", response.getError().getMessage());
-                }
+
+    private void onSignInResult(FirebaseAuthUIAuthenticationResult result) {
+        IdpResponse response = result.getIdpResponse();
+        if (result.getResultCode() == RESULT_OK) {
+            // Successfully signed in
+            logUser();
+        } else {
+            Log.i("Digital Avatar", "Log in fallido");
+            if(response == null)
+                Log.i("Digital Avatar", "User cancelled sing in flow pressing back button");
+            else
+                Log.i("Digital Avatar", response.getError().getMessage());
+
             }
         }
-    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -421,36 +428,6 @@ public class DrawerActivity extends AppCompatActivity {
         alert.show();
     }
 
-    private class NetworkThread implements Runnable{
-        String json;
-
-        public String getJson(){
-            return json;
-        }
-
-        @Override
-        public void run() {
-            try {
-                json=getFriendsJSON();
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        }
-
-        private String getFriendsJSON() throws IOException {
-            String json ="";
-            URL externalURL = new URL("https://xxx.000webhostapp.com/friends.json");
-            BufferedReader in = new BufferedReader(new InputStreamReader(externalURL.openStream()));
-            String inputLine;
-            while ((inputLine = in.readLine()) != null) {
-                json += inputLine + '\n';
-            }
-            in.close();
-            return json;
-        }
-    }
-
-
     @Override
     public boolean onSupportNavigateUp() {
         drawer.openDrawer(GravityCompat.START);
@@ -489,7 +466,8 @@ public class DrawerActivity extends AppCompatActivity {
         avatar.setOneSignalID(OneSignalService.getUserID());
         avatar.setUID(user.getUid());
         avatar.setPhone(user.getPhoneNumber());
-        avatar.setPhoto(user.getPhotoUrl().toString());
+        if (user.getPhotoUrl() != null)
+            avatar.setPhoto(user.getPhotoUrl().toString());
         Log.i("Digital Avatar", "Datos personales almacenados en el avatar");
         loadUserView(user);
     }
@@ -520,3 +498,32 @@ public class DrawerActivity extends AppCompatActivity {
         }
     }
 }
+
+class NetworkThread implements Runnable{
+        String json;
+
+        public String getJson(){
+            return json;
+        }
+
+        @Override
+        public void run() {
+            try {
+                json=getFriendsJSON();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+        private String getFriendsJSON() throws IOException {
+            String json ="";
+            URL externalURL = new URL("https://xxx.000webhostapp.com/friends.json");
+            BufferedReader in = new BufferedReader(new InputStreamReader(externalURL.openStream()));
+            String inputLine;
+            while ((inputLine = in.readLine()) != null) {
+                json += inputLine + '\n';
+            }
+            in.close();
+            return json;
+        }
+    }
