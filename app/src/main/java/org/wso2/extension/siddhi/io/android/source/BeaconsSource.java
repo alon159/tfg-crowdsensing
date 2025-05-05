@@ -97,7 +97,7 @@ public class BeaconsSource extends Source {
     @Override
     public void connect(ConnectionCallback connectionCallback) throws
             ConnectionUnavailableException {
-        SiddhiAppService.getServiceInstance().registerReceiver(dataUpdateReceiver, intentFilter);
+        SiddhiAppService.getServiceInstance().registerReceiver(dataUpdateReceiver, intentFilter, Context.RECEIVER_NOT_EXPORTED);
     }
 
     @Override

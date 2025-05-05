@@ -31,9 +31,6 @@ public class OneSignalService {
         OneSignal.getDebug().setLogLevel(LogLevel.VERBOSE);
         // Initialize with your OneSignal App ID
         OneSignal.initWithContext(context, ONESIGNAL_APP_ID);
-        // Use this method to prompt for push notifications.
-        // We recommend removing this method after testing and instead use In-App Messages to prompt for notification permission.
-        OneSignal.getNotifications().requestPermission(false, Continue.none());
     }
 
     public static void postMessage(String title, String text, String data, String recipients){

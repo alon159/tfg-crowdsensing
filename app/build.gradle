@@ -73,7 +73,7 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.0'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.1'
     implementation 'org.altbeacon:android-beacon-library:2.+'
-    implementation 'com.google.android.gms:play-services-awareness:19.0.1'
+    implementation 'com.google.android.gms:play-services-awareness:19.1.0'
     implementation files('bsh-2.0b6.jar')
 
     //implementation('org.wso2.siddhi:siddhi-core:4.0.0-M86') {
@@ -141,14 +141,9 @@ dependencies {
     implementation 'com.google.firebase:firebase-messaging'
     implementation 'com.onesignal:OneSignal:[5.1.6, 5.1.99]'
     implementation 'com.google.firebase:firebase-auth'
-    implementation 'com.google.android.gms:play-services-auth:17.0.0'
-    implementation 'com.firebaseui:firebase-ui-auth:9.0.0'
+    implementation 'com.google.android.gms:play-services-auth:20.7.0'
+    implementation 'com.firebaseui:firebase-ui-auth:8.0.2'
     implementation 'com.google.code.gson:gson:2.13.1'
-
-    //implementation "com.amazonaws:aws-java-sdk-sns:1.11.238"
-    //implementation 'software.amazon.awssdk:url-connection-client:2.13.49'
-    //implementation 'software.amazon.awssdk:sns:2.13.49'
-    //implementation 'software.amazon.awssdk:url-connection-client:2.13.49'
 }
 
 task clearJar(type: Delete) {
