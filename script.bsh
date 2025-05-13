@@ -12,7 +12,7 @@ int q01 = 0;
 int q10 = 0;
 int q11 = 0;
 
-Entity crowdpoll = (Entity) dac.getAll("DA-Poll"+poll, EntityType.OFFER).get(0);
+Entity crowdpoll = (Entity) dac.getAll("DA-Poll"+poll, type).get(0);
 Value myresult = (Value) crowdpoll.get("myresult");
 JSONObject myresultjson = new JSONObject(myresult.get());
 if (myresultjson.getString("q0").equals("Yes")){
