@@ -5,6 +5,7 @@ import android.content.Context;
 import com.apvereda.utils.DigitalAvatar;
 import com.couchbase.lite.Document;
 import com.couchbase.lite.MutableDocument;
+import com.couchbase.lite.Collection;
 
 import java.util.List;
 import java.util.Map;
@@ -66,7 +67,7 @@ public class Avatar {
 
     private static void initialize(){
         DigitalAvatar da = DigitalAvatar.getDA();
-        Document doc = da.getDoc("Avatar");
+        Document doc = da.getDoc(da.getAvatars(), "Avatar");
         avatar = new Avatar(doc.getString("UID"), doc.getString("IDToken"), doc.getString("Email"), doc.getString("Name"),
                 "", doc.getString("Phone"), doc.getString("IDOneSignal"),
                 doc.getString("Photo"));
@@ -87,9 +88,10 @@ public class Avatar {
     public void setUID(String UID) {
         this.UID = UID;
         DigitalAvatar da = DigitalAvatar.getDA();
-        MutableDocument doc = da.getDoc("Avatar");
+        Collection avatars = da.getAvatars();
+        MutableDocument doc = da.getDoc(avatars,"Avatar");
         doc.setString("UID", UID);
-        da.saveDoc(doc);
+        da.saveDoc(avatars,doc);
     }
 
     public String getEmail() {
@@ -99,9 +101,10 @@ public class Avatar {
     public void setEmail(String email) {
         this.email = email;
         DigitalAvatar da = DigitalAvatar.getDA();
-        MutableDocument doc = da.getDoc("Avatar");
+        Collection avatars = da.getAvatars();
+        MutableDocument doc = da.getDoc(avatars, "Avatar");
         doc.setString("Email", email);
-        da.saveDoc(doc);
+        da.saveDoc(avatars, doc);
     }
 
     public String getName() {
@@ -111,9 +114,10 @@ public class Avatar {
     public void setName(String name) {
         this.name = name;
         DigitalAvatar da = DigitalAvatar.getDA();
-        MutableDocument doc = da.getDoc("Avatar");
+        Collection avatars = da.getAvatars();
+        MutableDocument doc = da.getDoc(avatars, "Avatar");
         doc.setString("Name", name);
-        da.saveDoc(doc);
+        da.saveDoc(avatars, doc);
     }
 
     public String getLastName() {
@@ -123,9 +127,10 @@ public class Avatar {
     public void setLastName(String lastName) {
         this.lastName = lastName;
         DigitalAvatar da = DigitalAvatar.getDA();
-        MutableDocument doc = da.getDoc("Avatar");
+        Collection avatars = da.getAvatars();
+        MutableDocument doc = da.getDoc(avatars, "Avatar");
         doc.setString("LastName", lastName);
-        da.saveDoc(doc);
+        da.saveDoc(avatars, doc);
     }
 
     public String getPhone() {
@@ -135,9 +140,10 @@ public class Avatar {
     public void setPhone(String phone) {
         this.phone = phone;
         DigitalAvatar da = DigitalAvatar.getDA();
-        MutableDocument doc = da.getDoc("Avatar");
+        Collection avatars = da.getAvatars();
+        MutableDocument doc = da.getDoc(avatars, "Avatar");
         doc.setString("Phone", phone);
-        da.saveDoc(doc);
+        da.saveDoc(avatars, doc);
     }
 
     public String getOneSignalID() {
@@ -147,9 +153,10 @@ public class Avatar {
     public void setOneSignalID(String oneSignalID) {
         this.oneSignalID = oneSignalID;
         DigitalAvatar da = DigitalAvatar.getDA();
-        MutableDocument doc = da.getDoc("Avatar");
+        Collection avatars = da.getAvatars();
+        MutableDocument doc = da.getDoc(avatars, "Avatar");
         doc.setString("IDOneSignal", oneSignalID);
-        da.saveDoc(doc);
+        da.saveDoc(avatars, doc);
     }
 
     public String getPhoto() {
@@ -159,9 +166,10 @@ public class Avatar {
     public void setPhoto(String photo) {
         this.photo = photo;
         DigitalAvatar da = DigitalAvatar.getDA();
-        MutableDocument doc = da.getDoc("Avatar");
+        Collection avatars = da.getAvatars();
+        MutableDocument doc = da.getDoc(avatars, "Avatar");
         doc.setString("Photo", photo);
-        da.saveDoc(doc);
+        da.saveDoc(avatars, doc);
     }
 
     public String getIdToken() {
@@ -171,9 +179,10 @@ public class Avatar {
     public void setIdToken(String idToken) {
         this.idToken = idToken;
         DigitalAvatar da = DigitalAvatar.getDA();
-        MutableDocument doc = da.getDoc("Avatar");
+        Collection avatars = da.getAvatars();
+        MutableDocument doc = da.getDoc(avatars, "Avatar");
         doc.setString("IDToken", idToken);
-        da.saveDoc(doc);
+        da.saveDoc(avatars, doc);
     }
 
     public Map<String, Object> getAdditionalData() {
@@ -183,10 +192,11 @@ public class Avatar {
     public void setAdditionalData(Map<String, Object> additionalData) {
         this.additionalData = additionalData;
         DigitalAvatar da = DigitalAvatar.getDA();
-        MutableDocument doc = da.getDoc("Avatar");
+        Collection avatars = da.getAvatars();
+        MutableDocument doc = da.getDoc(avatars, "Avatar");
         for(String key : additionalData.keySet()) {
             doc.setValue(key, additionalData.get(key));
         }
-        da.saveDoc(doc);
+        da.saveDoc(avatars, doc);
     }
 }

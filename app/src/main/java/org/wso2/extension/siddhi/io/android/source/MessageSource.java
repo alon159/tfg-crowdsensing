@@ -96,7 +96,7 @@ public class MessageSource extends Source {
     @Override
     public void connect(ConnectionCallback connectionCallback) throws
             ConnectionUnavailableException {
-        SiddhiAppService.getServiceInstance().registerReceiver(dataUpdateReceiver, intentFilter, Context.RECEIVER_NOT_EXPORTED);
+        SiddhiAppService.getServiceInstance().registerReceiver(dataUpdateReceiver, intentFilter, Context.RECEIVER_EXPORTED);
     }
 
     @Override
@@ -143,6 +143,7 @@ public class MessageSource extends Source {
                     results.put(key, value);
                 }
             }
+            Log.i("MessageSource", "Intent received: " + intent.getAction());
             sourceEventListener.onEvent(results, null);
         }
     }

@@ -2,8 +2,10 @@ package com.apvereda.db;
 
 import android.util.Log;
 
+import com.apvereda.uDataTypes.EntityType;
 import com.apvereda.utils.DigitalAvatar;
 import com.couchbase.lite.Array;
+import com.couchbase.lite.Collection;
 import com.couchbase.lite.CouchbaseLiteException;
 import com.couchbase.lite.Dictionary;
 import com.couchbase.lite.Document;
@@ -25,10 +27,11 @@ import java.util.TreeMap;
 
 public class Entity extends AbstractEntity{
     private String uid = null;
-    private String type;
+    private EntityType type;
     private Map<String, Value> values;
 
-    public Entity(String uid, String name, String type, String[] privacy, Date timestamp, Map<String, Value> values){
+
+    public Entity(String uid, String name, EntityType type, String[] privacy, Date timestamp, Map<String, Value> values){
         super(timestamp, privacy);
         setName(name);
         this.type=type;
@@ -36,11 +39,11 @@ public class Entity extends AbstractEntity{
         this.values = values;
     }
 
-    public String getType() {
+    public EntityType getType() {
         return type;
     }
 
-    public void setType(String type) {
+    public void setType(EntityType type) {
         this.type = type;
     }
 
@@ -66,12 +69,14 @@ public class Entity extends AbstractEntity{
 
     @Override
     public String toJSON() {
-        Document d = DigitalAvatar.getDA().getDocNM(uid);
+        DigitalAvatar da = DigitalAvatar.getDA();
+        Document d = da.getDocNM(da.getEntities(), uid);
         return d == null ? null: d.toJSON();
     }
 
     public void remove() {
-        DigitalAvatar.getDA().deleteDoc(getUid());
+        DigitalAvatar da = DigitalAvatar.getDA();
+        da.deleteDoc(da.getEntities(), getUid());
     }
 
     public void removeValue(String name) {
@@ -83,10 +88,11 @@ public class Entity extends AbstractEntity{
     public AbstractEntity get(String name){
         AbstractEntity result = null;
         Value aux = (Value) getValue(name);
+        Collection col = DigitalAvatar.getDA().getEntities();
         if(aux.getType().equals("entity")){
-            Query query = QueryBuilder
+/*            Query query = QueryBuilder
                     .select(SelectResult.all())
-                    .from(DigitalAvatar.getDataSource())
+                    .from(DigitalAvatar.getDataSource(col))
                     .where(Expression.property("type").equalTo(Expression.string("entity"))
                             .and(Meta.id).equalTo(Expression.string((String)aux.get())));
             try {
@@ -116,7 +122,7 @@ public class Entity extends AbstractEntity{
                 }
             } catch (CouchbaseLiteException e) {
                 Log.e("CouchbaseError", e.getLocalizedMessage());
-            }
+            }*/
         } else{
             result = aux;
         }
@@ -147,7 +153,7 @@ public class Entity extends AbstractEntity{
         }
         eDoc.setString("uid", eDoc.getId());
         eDoc.setString("name", e.getName());
-        eDoc.setString("type", "entity");
+        eDoc.setString("type", e.getType().getText());
         MutableArray privacy = new MutableArray();
         for(int i=0;i<e.getPrivacy().length;i++){
             privacy.addString(e.getPrivacy()[i]);
@@ -159,18 +165,19 @@ public class Entity extends AbstractEntity{
         for(String key : e.getValues().keySet()){
             MutableDictionary value = new MutableDictionary();
             Value v = (Value)e.getValue(key);
-            if(v.getType().equals("entity")){
-                value.setString("type", "entity");
-                value.setString("value", (String)v.get());
-            } else if(v.getType().equals("int")){
-                value.setString("type", "int");
-                value.setInt("value", (int)v.get());
-            } else if(v.getType().equals("double")){
-                value.setString("type", "double");
-                value.setDouble("value", (double)v.get());
-            } else if(v.getType().equals("String")){
-                value.setString("type", "String");
-                value.setString("value", (String)v.get());
+            switch (v.getType()) {
+                case "int" -> {
+                    value.setString("type", "int");
+                    value.setInt("value", (int) v.get());
+                }
+                case "double" -> {
+                    value.setString("type", "double");
+                    value.setDouble("value", (double) v.get());
+                }
+                case "String" -> {
+                    value.setString("type", "String");
+                    value.setString("value", (String) v.get());
+                }
             }
             //value.setString("uid", v.getUid());
             value.setString("name", key);
@@ -184,7 +191,8 @@ public class Entity extends AbstractEntity{
         }
         eDoc.setArray("value",values);
         Log.i("Digital Avatars", "creando entity... "+ eDoc.getString("name"));
-        DigitalAvatar.getDA().saveDoc(eDoc);
+        DigitalAvatar da = DigitalAvatar.getDA();
+        da.saveDoc(da.getEntities(), eDoc);
         return eDoc.getId();
     }
 }

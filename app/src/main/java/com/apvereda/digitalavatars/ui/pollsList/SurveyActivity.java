@@ -17,6 +17,7 @@ import android.widget.Toast;
 import com.apvereda.db.Entity;
 import com.apvereda.db.Value;
 import com.apvereda.digitalavatars.R;
+import com.apvereda.uDataTypes.EntityType;
 import com.apvereda.utils.DigitalAvatarController;
 
 import org.json.JSONArray;
@@ -95,7 +96,7 @@ public class SurveyActivity extends AppCompatActivity {
                     }
                     result = result.substring(0,result.length()-2)+"}";
                     DigitalAvatarController dac = new DigitalAvatarController();
-                    Entity poll = (Entity) dac.getAll(pollId).get(0);
+                    Entity poll = (Entity) dac.getAll(pollId, EntityType.OFFER).get(0);
                     String[] privacy =  {"public,public"};
                     poll.set("myresult",new Value("myresult","String",privacy, new Date(), result));
                     Log.i("DA-Crowd", "Entity submmited: "+ poll.getValues().keySet());

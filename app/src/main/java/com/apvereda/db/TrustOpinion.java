@@ -4,6 +4,7 @@ import android.util.Log;
 
 import com.apvereda.uDataTypes.SBoolean;
 import com.apvereda.utils.DigitalAvatar;
+import com.couchbase.lite.Collection;
 import com.couchbase.lite.CouchbaseLiteException;
 import com.couchbase.lite.Expression;
 import com.couchbase.lite.Meta;
@@ -105,11 +106,12 @@ public class TrustOpinion {
         opinionDoc.setBoolean("Referral", t.isReferral());
 
         Log.i("Digital Avatars", "creando opinion... "+ opinionDoc.getString("Trustee"));
-        DigitalAvatar.getDA().saveDoc(opinionDoc);
+        //DigitalAvatar.getDA().saveDoc(opinionDoc);
     }
 
     public static List<TrustOpinion> getReferralOpinionforTrustee(String uid){
         ArrayList<TrustOpinion> resultList = new ArrayList<TrustOpinion>();
+        Collection col = DigitalAvatar.getDA().getTrustOpinions();
         Query query = QueryBuilder
                 .select(SelectResult.expression(Meta.id),
                         SelectResult.property("Truster"),
@@ -120,7 +122,7 @@ public class TrustOpinion {
                         SelectResult.property("Uncertainty"),
                         SelectResult.property("Referral"),
                         SelectResult.property("BaseRate"))
-                .from(DigitalAvatar.getDataSource())
+                .from(DigitalAvatar.getDataSource(col))
                 .where(Expression.property("type").equalTo(Expression.string("Opinion"))
                         .and(Expression.property("Trustee").equalTo(Expression.string(uid)))
                         .and(Expression.property("Truster").equalTo(Expression.string(Avatar.getAvatar().getUID())))
@@ -143,6 +145,7 @@ public class TrustOpinion {
 
     public static List<TrustOpinion> getOpinionbyTruster(String uid){
         ArrayList<TrustOpinion> resultList = new ArrayList<TrustOpinion>();
+        Collection col = DigitalAvatar.getDA().getTrustOpinions();
         Query query = QueryBuilder
                 .select(SelectResult.expression(Meta.id),
                         SelectResult.property("Truster"),
@@ -153,7 +156,7 @@ public class TrustOpinion {
                         SelectResult.property("Uncertainty"),
                         SelectResult.property("Referral"),
                         SelectResult.property("BaseRate"))
-                .from(DigitalAvatar.getDataSource())
+                .from(DigitalAvatar.getDataSource(col))
                 .where(Expression.property("type").equalTo(Expression.string("Opinion"))
                         .and(Expression.property("Truster").equalTo(Expression.string(uid))));
 
@@ -174,6 +177,7 @@ public class TrustOpinion {
 
     public static List<TrustOpinion> getDirectOpinionForTrustee(String uid){
         ArrayList<TrustOpinion> resultList = new ArrayList<TrustOpinion>();
+        Collection col = DigitalAvatar.getDA().getTrustOpinions();
         Query query = QueryBuilder
                 .select(SelectResult.expression(Meta.id),
                         SelectResult.property("Truster"),
@@ -184,7 +188,7 @@ public class TrustOpinion {
                         SelectResult.property("Uncertainty"),
                         SelectResult.property("Referral"),
                         SelectResult.property("BaseRate"))
-                .from(DigitalAvatar.getDataSource())
+                .from(DigitalAvatar.getDataSource(col))
                 .where(Expression.property("type").equalTo(Expression.string("Opinion"))
                         .and(Expression.property("Truster").equalTo(Expression.string(Avatar.getAvatar().getUID())))
                         .and(Expression.property("Trustee").equalTo(Expression.string(uid)))
@@ -207,6 +211,7 @@ public class TrustOpinion {
 
     public static List<TrustOpinion> getContactsOpinionForTrustee(String uid){
         ArrayList<TrustOpinion> resultList = new ArrayList<TrustOpinion>();
+        Collection col = DigitalAvatar.getDA().getTrustOpinions();
         Query query = QueryBuilder
                 .select(SelectResult.expression(Meta.id),
                         SelectResult.property("Truster"),
@@ -217,7 +222,7 @@ public class TrustOpinion {
                         SelectResult.property("Uncertainty"),
                         SelectResult.property("Referral"),
                         SelectResult.property("BaseRate"))
-                .from(DigitalAvatar.getDataSource())
+                .from(DigitalAvatar.getDataSource(col))
                 .where(Expression.property("type").equalTo(Expression.string("Opinion"))
                         .and(Expression.property("Trustee").equalTo(Expression.string(uid)))
                         .and(Expression.property("Referral").equalTo(Expression.booleanValue(false))));
@@ -239,6 +244,7 @@ public class TrustOpinion {
 
     public static List<TrustOpinion> getReferralOpinions(){
         ArrayList<TrustOpinion> resultList = new ArrayList<TrustOpinion>();
+        Collection col = DigitalAvatar.getDA().getTrustOpinions();
         Query query = QueryBuilder
                 .select(SelectResult.expression(Meta.id),
                         SelectResult.property("Truster"),
@@ -249,7 +255,7 @@ public class TrustOpinion {
                         SelectResult.property("Uncertainty"),
                         SelectResult.property("Referral"),
                         SelectResult.property("BaseRate"))
-                .from(DigitalAvatar.getDataSource())
+                .from(DigitalAvatar.getDataSource(col))
                 .where(Expression.property("type").equalTo(Expression.string("Opinion"))
                         .and(Expression.property("Truster").notEqualTo(Expression.string(Avatar.getAvatar().getUID()))));
 
@@ -269,6 +275,6 @@ public class TrustOpinion {
     }
 
     public static void deleteOpinion(String uid){
-        DigitalAvatar.getDA().deleteDoc(uid);
+        //DigitalAvatar.getDA().deleteDoc(uid);
     }
 }

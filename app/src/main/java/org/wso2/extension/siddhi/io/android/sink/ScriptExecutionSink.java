@@ -31,6 +31,7 @@ import com.apvereda.db.AbstractEntity;
 import com.apvereda.db.Avatar;
 import com.apvereda.db.Entity;
 import com.apvereda.db.Value;
+import com.apvereda.uDataTypes.EntityType;
 import com.apvereda.utils.DigitalAvatar;
 import com.apvereda.utils.DigitalAvatarController;
 import com.apvereda.utils.OneSignalService;
@@ -135,43 +136,50 @@ public class ScriptExecutionSink extends Sink {
     public void publish(Object o, DynamicOptions dynamicOptions)
             throws ConnectionUnavailableException {
         Map<String, Object> event = (Map<String, Object>) o;
+        Log.i("ScriptExecutionSink", "Poll received");
+        EntityType type = EntityType.fromText((String) event.get("type"));
+        if (type == null) {
+            Log.i("ScriptExecutionSink", "Invalid type of poll");
+            return;
+        }
         DigitalAvatarController dac = new DigitalAvatarController();
         List crowdpolls = new ArrayList<AbstractEntity>();
         lock.lock();
-        try{
-            crowdpolls = dac.getAll("DA-Poll"+event.get("pollId"));
-            if(crowdpolls.size() == 0) {
+        try {
+            crowdpolls = dac.getAll("DA-Poll" + event.get("pollId"), type);
+            if (crowdpolls.size() == 0) {
                 createPollEntity(event);
             }
         } finally {
             lock.unlock();
         }
         //List crowdpolls = dac.getAll("DA-Poll"+event.get("pollId"));
-        if(crowdpolls.size() == 0){
+        if (crowdpolls.size() == 0) {
             //Log.i("DA-Crowdsensing", "Non existing Poll received");
             //createPollEntity(event);
-            Log.i("DA-Crowdsensing", "Poll received with pollId " + event.get("pollId"));
+            Log.i("DA-Crowdsensing", "Poll received with pollId " + event.get("pollId") + " and type " + event.get("type"));
             printCSV(context, "Poll received with pollId " + event.get("pollId"), new Date().toString());
-            String role = (String)event.get("role");
+            String role = (String) event.get("role");
             Executor exec = new Executor();
-            exec.setCallback((String)event.get("callback"));
-            exec.setScript((String)event.get("script"));
-            exec.setPoll((String)event.get("pollId"));
-            if(role.contains("Master")){
-                Log.i("DA-Crowdsensing", "My role is "+role);
-                printCSV(context, "My role is "+role, new Date().toString());
+            exec.setCallback((String) event.get("callback"));
+            exec.setScript((String) event.get("script"));
+            exec.setPoll((String) event.get("pollId"));
+            exec.setType(type);
+            if (role.contains("Master")) {
+                Log.i("DA-Crowdsensing", "My role is " + role);
+                printCSV(context, "My role is " + role, new Date().toString());
                 broadcastPoll(event, role);
                 //final Handler handler = new Handler(Looper.getMainLooper());
-                Log.i("DA-Crowdsensing", "Preparing execution in "+event.get("timeout"));
-                printCSV(context, "Preparing execution in "+event.get("timeout"), new Date().toString());
+                Log.i("DA-Crowdsensing", "Preparing execution in " + event.get("timeout"));
+                printCSV(context, "Preparing execution in " + event.get("timeout"), new Date().toString());
                 //handler.postDelayed(exec, Long.parseLong((String) event.get("timeout")));
-                Executors.newSingleThreadScheduledExecutor().schedule(exec,Long.parseLong((String) event.get("timeout")), TimeUnit.MILLISECONDS);
+                Executors.newSingleThreadScheduledExecutor().schedule(exec, Long.parseLong((String) event.get("timeout")), TimeUnit.MILLISECONDS);
             } else {
-                Log.i("DA-Crowdsensing", "My role is "+role);
-                printCSV(context, "My role is "+role, new Date().toString());
-                Log.i("DA-Crowdsensing", "Preparing execution in "+event.get("timeout"));
-                printCSV(context, "Preparing execution in "+event.get("timeout"), new Date().toString());
-                Executors.newSingleThreadScheduledExecutor().schedule(exec,Long.parseLong((String) event.get("timeout")), TimeUnit.MILLISECONDS);
+                Log.i("DA-Crowdsensing", "My role is " + role);
+                printCSV(context, "My role is " + role, new Date().toString());
+                Log.i("DA-Crowdsensing", "Preparing execution in " + event.get("timeout"));
+                printCSV(context, "Preparing execution in " + event.get("timeout"), new Date().toString());
+                Executors.newSingleThreadScheduledExecutor().schedule(exec, Long.parseLong((String) event.get("timeout")), TimeUnit.MILLISECONDS);
                 //Thread thread = new Thread(exec);
                 //thread.start();
             }
@@ -179,32 +187,32 @@ public class ScriptExecutionSink extends Sink {
     }
 
     private void createPollEntity(Map<String, Object> event) {
-        String[] privacy =  {"public,public"};
+        String[] privacy = {"public,public"};
         Map<String, Value> values = new TreeMap<>();
-        values.put("callback", new Value("callback","String",privacy, new Date(), event.get("callback")));
-        values.put("pollId", new Value("pollId","String",privacy, new Date(), event.get("pollId")));
-        values.put("survey", new Value("survey","String",privacy, new Date(), event.get("survey")));
-        values.put("results", new Value("results","String",privacy, new Date(), "[]"));
-        Entity entity = new Entity(null, "DA-Poll" + event.get("pollId"),"entity", privacy, new Date(), values);
+        values.put("callback", new Value("callback", "String", privacy, new Date(), event.get("callback")));
+        values.put("pollId", new Value("pollId", "String", privacy, new Date(), event.get("pollId")));
+        values.put("survey", new Value("survey", "String", privacy, new Date(), event.get("survey")));
+        values.put("results", new Value("results", "String", privacy, new Date(), "[]"));
+        Entity entity = new Entity(null, "DA-Poll" + event.get("pollId"), EntityType.fromText((String) event.get("type")), privacy, new Date(), values);
         Entity.create(entity);
-        Log.i("DA-Crowdsensing", "Poll created: "+entity.getName());
-        printCSV(context, "Poll created: "+entity.getName(), new Date().toString());
+        Log.i("DA-Crowdsensing", "Poll created: " + entity.getName() + " with type " + entity.getType().getText());
+        printCSV(context, "Poll created: " + entity.getName(), new Date().toString());
     }
 
     private void broadcastPoll(Map<String, Object> event, String role) {
         Intent i = new Intent("broadcastPoll");
-        int level = Integer.parseInt(role.split("-")[1]) -1;
-        String nextRole = level == 0 ? "Slave" : "Master-"+level;
-        i.putExtra("role",nextRole);
+        int level = Integer.parseInt(role.split("-")[1]) - 1;
+        String nextRole = level == 0 ? "Slave" : "Master-" + level;
+        i.putExtra("role", nextRole);
         i.putExtra("pollId", (String) event.get("pollId"));
         i.putExtra("script", (String) event.get("script"));
         i.putExtra("survey", (String) event.get("survey"));
-        i.putExtra("callback", "onesignalid: "+Avatar.getAvatar().getOneSignalID());
+        i.putExtra("callback", "onesignalid: " + Avatar.getAvatar().getOneSignalID());
         long nextTimeout = Long.parseLong((String) event.get("timeout")) / 2;
-        i.putExtra("timeout", ""+nextTimeout);
+        i.putExtra("timeout", "" + nextTimeout);
         SiddhiAppService.getServiceInstance().sendBroadcast(i);
-        Log.i("DA-Crowdsensing", "Sending broadcast poll for "+nextRole+" with timeout "+nextTimeout);
-        printCSV(context, "Sending broadcast poll for "+nextRole+" with timeout "+nextTimeout, new Date().toString());
+        Log.i("DA-Crowdsensing", "Sending broadcast poll for " + nextRole + " with timeout " + nextTimeout);
+        printCSV(context, "Sending broadcast poll for " + nextRole + " with timeout " + nextTimeout, new Date().toString());
     }
 
     @Override
@@ -232,20 +240,20 @@ public class ScriptExecutionSink extends Sink {
 
     }
 
-    public void printCSV(Context context, String message, String time){
+    public void printCSV(Context context, String message, String time) {
         try {
             File fileDirectory = new File(context.getFilesDir(), "/Test");
-            if(!fileDirectory.exists()){
+            if (!fileDirectory.exists()) {
                 fileDirectory.mkdir();
             }
             File root = new File(context.getExternalFilesDir(Environment.getDataDirectory().getAbsolutePath()), "Test");
             if (!root.exists()) {
-                Log.i("Ficheros-DA", "La carpeta Test no existe "+root.getAbsolutePath());
+                Log.i("Ficheros-DA", "La carpeta Test no existe " + root.getAbsolutePath());
                 root.mkdirs();
             }
-            File file = new File(root,"/Test.csv");
-            FileWriter csvWriter =  new FileWriter(file, true);
-            csvWriter.append(Avatar.getAvatar().getOneSignalID()+" ; \""+message+"\" ; "+time+"\n");
+            File file = new File(root, "/Test.csv");
+            FileWriter csvWriter = new FileWriter(file, true);
+            csvWriter.append(Avatar.getAvatar().getOneSignalID() + " ; \"" + message + "\" ; " + time + "\n");
             csvWriter.flush();
             csvWriter.close();
         } catch (IOException e) {
@@ -257,18 +265,21 @@ public class ScriptExecutionSink extends Sink {
         private String callback;
         private String scriptUrl;
         private String poll;
+        private EntityType type;
 
         @Override
         public void run() {
             try {
                 //if answered????
                 DigitalAvatarController dac = new DigitalAvatarController();
-                Entity crowdpoll = (Entity) dac.getAll("DA-Poll"+poll).get(0);
-                if(crowdpoll.getValues().containsKey("myresult")) {
+                Entity crowdpoll = (Entity) dac.getAll("DA-Poll" + poll, type).get(0);
+                Log.i("DA-Crowdsensing", "Poll acquired: " + crowdpoll.getUid());
+                if (crowdpoll.getValues().containsKey("myresult")) {
+                    //scriptUrl = "https://raw.githubusercontent.com/alon159/tfg-crowdsensing/refs/heads/main/script.bsh"
                     String script = getScript();
                     final Interpreter i = new Interpreter();
                     i.set("dac", new DigitalAvatarController());
-                    i.set("poll",poll);
+                    i.set("poll", poll);
                     //i.set("myresult", ((Value)crowdpoll.get("myresult")).get()+"");
                     Log.i("DA-Crowdsensing", "Script acquired " + script);
                     printCSV(context, "Script acquired", new Date().toString());
@@ -287,15 +298,15 @@ public class ScriptExecutionSink extends Sink {
                         intent.putExtra("result", result);
                         SiddhiAppService.getServiceInstance().sendBroadcast(intent);
                         Log.i("DA-Crowdsensing", "Slave sending result to sender " + callback);
-                        printCSV(context, "Slave sending result to " + callback+ ": "+result, new Date().toString());
-                        Toast toast =Toast.makeText(context,"Sending results: "+result, Toast.LENGTH_LONG);
+                        printCSV(context, "Slave sending result to " + callback + ": " + result, new Date().toString());
+                        Toast toast = Toast.makeText(context, "Sending results: " + result, Toast.LENGTH_LONG);
                     } else { // SI SOY EL MASTER, ENTONCES MANDO RESPUESTA DIRECTO AL SERVIDOR
                         callback = callback.replace("server_url: ", "");
                         Log.i("DA-Crowdsensing", "Master sending result to server " + callback);
-                        printCSV(context, "Master sending result to " + callback+ ": "+result, new Date().toString());
+                        printCSV(context, "Master sending result to " + callback + ": " + result, new Date().toString());
                         Log.i("DA-Crowdsensing", "Result: " + result);
                         //Log.i("DA-Crowdsensing", "Contacts Results: " + contactsResult);
-                        Toast toast =Toast.makeText(context,"Sending results: "+result, Toast.LENGTH_LONG);
+                        Toast toast = Toast.makeText(context, "Sending results: " + result, Toast.LENGTH_LONG);
                         toast.show();
                         //postHttpRequest(callback, result);
                     }
@@ -306,12 +317,14 @@ public class ScriptExecutionSink extends Sink {
                 throw new RuntimeException(e);
             } catch (IOException e) {
                 throw new RuntimeException(e);
+            } catch (IndexOutOfBoundsException e) {
+                Log.i("ScriptExecutionSink", "Poll not found");
             }
         }
 
         @NonNull
         private String getScript() throws IOException {
-            String script ="";
+            String script = "";
             URL externalURL = new URL(scriptUrl);
             BufferedReader in = new BufferedReader(new InputStreamReader(externalURL.openStream()));
             String inputLine;
@@ -322,23 +335,23 @@ public class ScriptExecutionSink extends Sink {
             return script;
         }
 
-        private String postHttpRequest(String request, String pollResult){
-            String result ="";
+        private void postHttpRequest(String request, String pollResult) {
+            String result = "";
             try {
-                String urlParameters  = "pollResult="+pollResult;
-                byte[] postData       = urlParameters.getBytes( StandardCharsets.UTF_8 );
-                int    postDataLength = postData.length;
-                URL url            = new URL( request );
-                HttpURLConnection conn= (HttpURLConnection) url.openConnection();
-                conn.setDoOutput( true );
-                conn.setInstanceFollowRedirects( false );
-                conn.setRequestMethod( "POST" );
-                conn.setRequestProperty( "Content-Type", "application/x-www-form-urlencoded");
-                conn.setRequestProperty( "charset", "utf-8");
-                conn.setRequestProperty( "Content-Length", Integer.toString( postDataLength ));
-                conn.setUseCaches( false );
-                try( DataOutputStream wr = new DataOutputStream( conn.getOutputStream())) {
-                    wr.write( postData );
+                String urlParameters = "pollResult=" + pollResult;
+                byte[] postData = urlParameters.getBytes(StandardCharsets.UTF_8);
+                int postDataLength = postData.length;
+                URL url = new URL(request);
+                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                conn.setDoOutput(true);
+                conn.setInstanceFollowRedirects(false);
+                conn.setRequestMethod("POST");
+                conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+                conn.setRequestProperty("charset", "utf-8");
+                conn.setRequestProperty("Content-Length", Integer.toString(postDataLength));
+                conn.setUseCaches(false);
+                try (DataOutputStream wr = new DataOutputStream(conn.getOutputStream())) {
+                    wr.write(postData);
                     wr.close();
                 }
                 BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
@@ -351,7 +364,6 @@ public class ScriptExecutionSink extends Sink {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            return result;
         }
 
         public void setCallback(String callback) {
@@ -364,6 +376,10 @@ public class ScriptExecutionSink extends Sink {
 
         public void setPoll(String poll) {
             this.poll = poll;
+        }
+
+        public void setType(EntityType type) {
+            this.type = type;
         }
     }
 }

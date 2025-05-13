@@ -101,6 +101,7 @@ public class MessageHandler implements INotificationServiceExtension {
                             //Log.i("DA-Crowdsensing", "message data key: " + key+" value: "+data.getString(key));
                         }
                     }
+                    Log.i("MessageHandler", "Intent enviado");
                     SiddhiAppService.getServiceInstance().sendBroadcast(i);
                 }
             } else{

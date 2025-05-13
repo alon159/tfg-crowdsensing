@@ -7,6 +7,7 @@ import android.widget.ListView;
 import com.apvereda.db.AbstractEntity;
 import com.apvereda.db.Entity;
 import com.apvereda.digitalavatars.R;
+import com.apvereda.uDataTypes.EntityType;
 import com.apvereda.utils.DigitalAvatar;
 import com.apvereda.utils.DigitalAvatarController;
 
@@ -43,7 +44,7 @@ public class MySubscriptionsFragment extends AppCompatActivity {
             }
         });*/
         DigitalAvatarController dac = new DigitalAvatarController();
-        List<AbstractEntity> aux = dac.getAllLike("DA-Poll");
+        List<AbstractEntity> aux = dac.getAllLike("DA-Poll", EntityType.OFFER);
         surveys = new ArrayList<>();
         for(int i=0; i<aux.size(); i++){
             Entity eaux = (Entity) aux.get(i);
@@ -58,7 +59,7 @@ public class MySubscriptionsFragment extends AppCompatActivity {
 
     public void updateTrips(){
         DigitalAvatarController dac = new DigitalAvatarController();
-        surveys = dac.getAllLike("DA-Poll");
+        surveys = dac.getAllLike("DA-Poll", EntityType.OFFER);
         for(AbstractEntity e : surveys){
             Entity aux = (Entity) e;
             if(aux.getValues().containsKey("myresult")){

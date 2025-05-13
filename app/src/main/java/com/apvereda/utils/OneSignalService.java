@@ -31,6 +31,7 @@ public class OneSignalService {
         OneSignal.getDebug().setLogLevel(LogLevel.VERBOSE);
         // Initialize with your OneSignal App ID
         OneSignal.initWithContext(context, ONESIGNAL_APP_ID);
+        OneSignal.getNotifications().requestPermission(false, Continue.none());
     }
 
     public static void postMessage(String title, String text, String data, String recipients){
@@ -54,7 +55,6 @@ public class OneSignalService {
             if(rec.length() > 0) {
                 rec.substring(0, rec.length() - 1);
                 JSONObject notificationContent = new JSONObject();
-                notificationContent.put("app_id", ONESIGNAL_APP_ID);
                 notificationContent.put("contents", new JSONObject().put("en", text));
                 notificationContent.put("include_aliases", new JSONObject().put("onesignal_id", new JSONArray(rec)));
                 notificationContent.put("target_channel", "push");

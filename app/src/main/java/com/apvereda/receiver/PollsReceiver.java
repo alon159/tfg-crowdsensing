@@ -10,6 +10,7 @@ import android.widget.Toast;
 import com.apvereda.db.Avatar;
 import com.apvereda.db.Entity;
 import com.apvereda.db.Value;
+import com.apvereda.uDataTypes.EntityType;
 import com.apvereda.utils.DigitalAvatarController;
 
 import java.io.File;
@@ -38,7 +39,7 @@ public class PollsReceiver extends BroadcastReceiver {
                 String count = intent.getStringExtra("count");
                 result = "{count:"+count+", result:"+result+"}";
                 DigitalAvatarController dac = new DigitalAvatarController();
-                List polls = dac.getAll("DA-Poll"+intent.getStringExtra("pollId"));
+                List polls = dac.getAll("DA-Poll"+intent.getStringExtra("pollId"), EntityType.OFFER);
                 if(polls.size() != 0) {
                     Entity poll = (Entity) polls.get(0);
                     Value resultValue = (Value) poll.get("results");

@@ -12,8 +12,10 @@ import com.apvereda.db.Avatar;
 import com.apvereda.db.Entity;
 import com.apvereda.db.Value;
 import com.apvereda.digitalavatars.R;
+import com.apvereda.uDataTypes.EntityType;
 import com.apvereda.utils.DigitalAvatar;
 import com.couchbase.lite.Array;
+import com.couchbase.lite.Collection;
 import com.couchbase.lite.CouchbaseLiteException;
 import com.couchbase.lite.Dictionary;
 import com.couchbase.lite.Expression;
@@ -33,7 +35,7 @@ public class DigitalAvatarController {
     Avatar avatar;
     //Context context;
 
-    public DigitalAvatarController(){
+    public DigitalAvatarController() {
         avatar = Avatar.getAvatar();
         //this.context=context;
     }
@@ -47,16 +49,13 @@ public class DigitalAvatarController {
         */
     }
 
-    public void connect(String url, String data) {
-        new CallAPI().execute(url,data);
-    }
-
-    public List<AbstractEntity> getAll(String name){
+    public List<AbstractEntity> getAll(String name, EntityType type) {
         List<AbstractEntity> list = new ArrayList<>();
+        Collection col = DigitalAvatar.getDA().getEntities();
         Query query = QueryBuilder
                 .select(SelectResult.all())
-                .from(DigitalAvatar.getDataSource())
-                .where(Expression.property("type").equalTo(Expression.string("entity"))
+                .from(DigitalAvatar.getDataSource(col))
+                .where(Expression.property("type").equalTo(Expression.string(type.getText()))
                         .and(Expression.property("name").equalTo(Expression.string(name))));
         try {
             ResultSet rs = query.execute();
@@ -64,7 +63,7 @@ public class DigitalAvatarController {
                 AbstractEntity result = null;
                 Dictionary dic = r.getDictionary(0);
                 if (dic != null) {
-                    result = new Entity(dic.getString("uid"), dic.getString("name"), dic.getString("type"),
+                    result = new Entity(dic.getString("uid"), dic.getString("name"), EntityType.fromText(dic.getString("type")),
                             dic.getArray("privacy").toList().toArray(new String[]{}), dic.getDate("timestamp"), null);
                     Array a = dic.getArray("value");
                     Map<String, Value> valuesMap = new TreeMap<>();
@@ -92,20 +91,21 @@ public class DigitalAvatarController {
         return list;
     }
 
-    public List<AbstractEntity> getAllLike(String name){
+    public List<AbstractEntity> getAllLike(String name, EntityType type) {
         List<AbstractEntity> list = new ArrayList<>();
+        Collection col = DigitalAvatar.getDA().getEntities();
         Query query = QueryBuilder
                 .select(SelectResult.all())
-                .from(DigitalAvatar.getDataSource())
-                .where(Expression.property("type").equalTo(Expression.string("entity"))
-                        .and(Expression.property("name").like(Expression.string(name+"%"))));
+                .from(DigitalAvatar.getDataSource(col))
+                .where(Expression.property("type").equalTo(Expression.string(type.getText()))
+                        .and(Expression.property("name").like(Expression.string(name + "%"))));
         try {
             ResultSet rs = query.execute();
             for (Result r : rs) {
                 AbstractEntity result = null;
                 Dictionary dic = r.getDictionary(0);
                 if (dic != null) {
-                    result = new Entity(dic.getString("uid"), dic.getString("name"), dic.getString("type"),
+                    result = new Entity(dic.getString("uid"), dic.getString("name"), EntityType.fromText(dic.getString("type")),
                             dic.getArray("privacy").toList().toArray(new String[]{}), dic.getDate("timestamp"), null);
                     Array a = dic.getArray("value");
                     Map<String, Value> valuesMap = new TreeMap<>();
@@ -133,12 +133,13 @@ public class DigitalAvatarController {
         return list;
     }
 
-    public List<AbstractEntity> getAll(String name, Entity entity){
+    public List<AbstractEntity> getAll(String name, Entity entity) {
         List<AbstractEntity> list = new ArrayList<>();
+        Collection col = DigitalAvatar.getDA().getEntities();
         Query query = QueryBuilder
                 .select(SelectResult.all())
-                .from(DigitalAvatar.getDataSource())
-                .where(Expression.property("type").equalTo(Expression.string(entity.getType()))
+                .from(DigitalAvatar.getDataSource(col))
+                .where(Expression.property("type").equalTo(Expression.string(entity.getType().getText()))
                         .and(Expression.property("name").equalTo(Expression.string(name))));
         try {
             ResultSet rs = query.execute();
@@ -146,7 +147,7 @@ public class DigitalAvatarController {
                 AbstractEntity result = null;
                 Dictionary dic = r.getDictionary(0);
                 if (dic != null) {
-                    result = new Entity(dic.getString("uid"), dic.getString("name"), dic.getString("type"),
+                    result = new Entity(dic.getString("uid"), dic.getString("name"), EntityType.fromText(dic.getString("type")),
                             dic.getArray("privacy").toList().toArray(new String[]{}), dic.getDate("timestamp"), null);
                     Array a = dic.getArray("value");
                     Map<String, Value> valuesMap = new TreeMap<>();

@@ -9,6 +9,7 @@ import com.couchbase.lite.Dictionary;
 import com.couchbase.lite.Expression;
 import com.couchbase.lite.Meta;
 import com.couchbase.lite.MutableDocument;
+import com.couchbase.lite.Collection;
 import com.couchbase.lite.Ordering;
 import com.couchbase.lite.Query;
 import com.couchbase.lite.QueryBuilder;
@@ -132,9 +133,10 @@ public class Contact {
 
     public static List<Contact> getAllContacts(){
         ArrayList<Contact> resultList = new ArrayList<Contact>();
+        Collection col = DigitalAvatar.getDA().getContacts();
         Query query = QueryBuilder
                 .select(SelectResult.all())
-                .from(DigitalAvatar.getDataSource())
+                .from(DigitalAvatar.getDataSource(col))
                 .where(Expression.property("type").equalTo(Expression.string("Contact")));
 
         try {
@@ -164,9 +166,10 @@ public class Contact {
 
     public static Contact getContactByEmail(String email){
         Contact c = null;
+        Collection col = DigitalAvatar.getDA().getContacts();
         Query query = QueryBuilder
                 .select(SelectResult.all())
-                .from(DigitalAvatar.getDataSource())
+                .from(DigitalAvatar.getDataSource(col))
                 .where(Expression.property("type").equalTo(Expression.string("Contact"))
                         .and(Expression.property("Email").equalTo(Expression.string(email))));
 
@@ -195,9 +198,10 @@ public class Contact {
 
     public static Contact getContactByOneSignal(String onesignal){
         Contact c = null;
+        Collection col = DigitalAvatar.getDA().getContacts();
         Query query = QueryBuilder
                 .select(SelectResult.all())
-                .from(DigitalAvatar.getDataSource())
+                .from(DigitalAvatar.getDataSource(col))
                 .where(Expression.property("type").equalTo(Expression.string("Contact"))
                         .and(Expression.property("IDOneSignal").like(Expression.string("%"+onesignal))));
 
@@ -226,9 +230,10 @@ public class Contact {
 
     public static Contact getContact(String uid){
         Contact c = null;
+        Collection col = DigitalAvatar.getDA().getContacts();
         Query query = QueryBuilder
                 .select(SelectResult.all())
-                .from(DigitalAvatar.getDataSource())
+                .from(DigitalAvatar.getDataSource(col))
                 .where(Expression.property("type").equalTo(Expression.string("Contact"))
                         .and(Expression.property("UID").equalTo(Expression.string(uid))));
 
@@ -270,19 +275,23 @@ public class Contact {
             contactDoc.setValue(key, c.getAdditionalData().get(key));
         }
         Log.i("Digital Avatars", "creando contacto... "+ contactDoc.getString("Email"));
-        DigitalAvatar.getDA().saveDoc(contactDoc);
+        DigitalAvatar da = DigitalAvatar.getDA();
+        da.saveDoc(da.getContacts(), contactDoc);
     }
 
     public static void deleteContactByEmail(String email){
-        DigitalAvatar.getDA().deleteDoc(getContactByEmail(email).getUID());
+        DigitalAvatar da = DigitalAvatar.getDA();
+        da.deleteDoc(da.getContacts(), getContactByEmail(email).getUID());
     }
 
     public static void deleteContact(String uid){
-        DigitalAvatar.getDA().deleteDoc(uid);
+        DigitalAvatar da = DigitalAvatar.getDA();
+        da.deleteDoc(da.getContacts(), uid);
     }
 
     public static void updateContact(Contact c){
-        MutableDocument contactDoc = DigitalAvatar.getDA().getDoc(c.getUID()).toMutable();
+        DigitalAvatar da = DigitalAvatar.getDA();
+        MutableDocument contactDoc = da.getDoc(da.getContacts(), c.getUID());
         contactDoc.setString("Email", c.getEmail());
         contactDoc.setString("Name", c.getName());
         contactDoc.setString("LastName", c.getLastName());
@@ -293,6 +302,6 @@ public class Contact {
         for(String key : c.getAdditionalData().keySet()){
             contactDoc.setValue(key, c.getAdditionalData().get(key));
         }
-        DigitalAvatar.getDA().saveDoc(contactDoc);
+        da.saveDoc(da.getContacts(), contactDoc);
     }
 }

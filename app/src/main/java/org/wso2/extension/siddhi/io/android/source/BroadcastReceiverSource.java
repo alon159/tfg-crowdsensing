@@ -96,7 +96,7 @@ public class BroadcastReceiverSource extends Source {
     @Override
     public void connect(ConnectionCallback connectionCallback) throws
             ConnectionUnavailableException {
-        SiddhiAppService.getServiceInstance().registerReceiver(dataUpdateReceiver, intentFilter, Context.RECEIVER_NOT_EXPORTED);
+        SiddhiAppService.getServiceInstance().registerReceiver(dataUpdateReceiver, intentFilter, Context.RECEIVER_EXPORTED);
     }
 
     @Override
@@ -143,7 +143,7 @@ public class BroadcastReceiverSource extends Source {
                     results.put(key, value);
                 }
             }
-            //Log.i("SiddhiSource", "Se ha recibido el evento con las claves"+ results);
+            Log.i("SiddhiSource", "Se ha recibido el evento con las claves"+ results);
             sourceEventListener.onEvent(results, null);
         }
     }

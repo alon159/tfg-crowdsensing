@@ -6,9 +6,9 @@ import java.util.List;
 
 public class UString {
 
-	public static final double THRESHOLD = 0.95d;
-	private final String string;
-	private final double sConf;
+    public static final double THRESHOLD = 0.95d;
+    private final String string;
+    private final double sConf;
 
     /***
      * Constructors
@@ -17,7 +17,8 @@ public class UString {
     public UString(String s, double sConf) {
         string = s;
         this.sConf = sConf;
-    	if ((sConf < 0.0) || (sConf > 1.0) ) throw new IllegalArgumentException("Invalid parameters");
+        if ((sConf < 0.0) || (sConf > 1.0))
+            throw new IllegalArgumentException("Invalid parameters");
 
     }
 
@@ -35,17 +36,17 @@ public class UString {
     /***
      * Auxiliary operations
      ***/
-    public double confToDist(){
-        return this.string.length()*(1 - this.sConf);
+    public double confToDist() {
+        return this.string.length() * (1 - this.sConf);
     }
 
-    public double confToDist(double conf, int size){
-    	if ((conf < 0.0) || (conf > 1.0) ) throw new IllegalArgumentException("Invalid parameters");
-      return size *(1 - conf);
+    public double confToDist(double conf, int size) {
+        if ((conf < 0.0) || (conf > 1.0)) throw new IllegalArgumentException("Invalid parameters");
+        return size * (1 - conf);
     }
 
-    public double distToConf(double dist, int size){
-        return Math.max(1-dist/size, 0.0d);
+    public double distToConf(double dist, int size) {
+        return Math.max(1 - dist / size, 0.0d);
     }
 
     @Override
@@ -57,7 +58,7 @@ public class UString {
         a = a.toLowerCase();
         b = b.toLowerCase();
         // i == 0
-        int [] costs = new int [b.length() + 1];
+        int[] costs = new int[b.length() + 1];
         for (int j = 0; j < costs.length; j++)
             costs[j] = j;
         for (int i = 1; i <= a.length(); i++) {
@@ -77,17 +78,17 @@ public class UString {
     /***
      * UString operations
      ***/
-    public UString uConcat(UString u){
+    public UString uConcat(UString u) {
         String s = this.getString() + u.getString();
 
         double auxDist = this.confToDist() + u.confToDist();
-        double sConf = distToConf(auxDist, this.getString().length()+u.getString().length());
+        double sConf = distToConf(auxDist, this.getString().length() + u.getString().length());
         return new UString(s, sConf);
     }
 
-    public UString uSubstring(int lower, int upper){
-       if (lower < 1 ) throw new IllegalArgumentException("lower should be greater than 0");
-        lower = lower -1; // para incluir desde hasta
+    public UString uSubstring(int lower, int upper) {
+        if (lower < 1) throw new IllegalArgumentException("lower should be greater than 0");
+        lower = lower - 1; // para incluir desde hasta
         String s = this.getString().substring(lower, upper);
         double sConf = this.getsConf();
         return new UString(s, sConf);
@@ -99,11 +100,11 @@ public class UString {
 //        return new UBoolean(true, conf);
         int result = this.string.compareTo(u.string);
         boolean b = result == 0;
-        double conf = (this==u) ? 1.0 : calculateConf(u);
+        double conf = (this == u) ? 1.0 : calculateConf(u);
         return new UBoolean(b, conf);
     }
 
-    public UBoolean uEqualsIgnoreCase(UString u){
+    public UBoolean uEqualsIgnoreCase(UString u) {
         return this.uToUpperCase().uEquals(u.uToUpperCase());
     }
 
@@ -132,62 +133,63 @@ public class UString {
         return new UInteger(this.string.length(), this.confToDist());
     }
 
-    public UString uToUpperCase(){
+    public UString uToUpperCase() {
         return new UString(this.getString().toUpperCase(), this.getsConf());
     }
 
-    public UString uToLowerCase(){
+    public UString uToLowerCase() {
         return new UString(this.getString().toLowerCase(), this.getsConf());
     }
 
-    public int indexOf(String s){
+    public int indexOf(String s) {
         return this.getString().indexOf(s);
     }
 
-    public String at(int idx){
-        if (idx < 1 || idx > this.string.length()) throw new IndexOutOfBoundsException("idx = " + idx);
-        return this.getString().substring(idx-1, idx);
+    public String at(int idx) {
+        if (idx < 1 || idx > this.string.length())
+            throw new IndexOutOfBoundsException("idx = " + idx);
+        return this.getString().substring(idx - 1, idx);
     }
 
-    public UString uAt(int idx){
+    public UString uAt(int idx) {
         return this.uSubstring(idx, idx);
     }
 
-    public List<UString> uCharacters(){
+    public List<UString> uCharacters() {
         List<UString> uchars = new ArrayList<>();
-        for (int i = 1; i <= this.string.length() ; i++) {
+        for (int i = 1; i <= this.string.length(); i++) {
             uchars.add(this.uAt(i));
         }
         return uchars;
     }
 
     /****
-    * Conversion operations
-    ****/
+     * Conversion operations
+     ****/
 
-    public String uToString(){
+    public String uToString() {
         return this.getString();
     }
 
-    public double toReal(){
+    public double toReal() {
         return Double.parseDouble(this.getString());
     }
 
-    public int toInteger(){
+    public int toInteger() {
         return Integer.parseInt(this.getString());
     }
 
-    public boolean toBoolean(){
+    public boolean toBoolean() {
         return Boolean.parseBoolean(this.getString());
     }
 
     /*
      * Revisar
      */
-    public UBoolean uToUBoolean(){
+    public UBoolean uToUBoolean() {
         UBoolean rTrue = this.uEqualsIgnoreCase(new UString("TRUE", 1.0d));
         UBoolean rFalse = this.uEqualsIgnoreCase(new UString("FALSE", 1.0d));
-        if(rTrue.getC() >= 0.5d)
+        if (rTrue.getC() >= 0.5d)
             return new UBoolean(true, rTrue.getC());
         else if (rFalse.getC() >= 0.5d)
             return new UBoolean(false, rFalse.getC());
@@ -195,7 +197,7 @@ public class UString {
             return new UBoolean(true, 0.5d);
     }
 
-    public UBoolean lt(UString u){
+    public UBoolean lt(UString u) {
         int result = this.string.compareTo(u.string);
         boolean b = result < 0;
         double conf = calculateConf(u);
@@ -203,21 +205,21 @@ public class UString {
     }
 
 
-    public UBoolean gt(UString u){
+    public UBoolean gt(UString u) {
         int result = this.string.compareTo(u.string);
         boolean b = result > 0;
         double conf = calculateConf(u);
         return new UBoolean(b, conf);
     }
 
-    public UBoolean le(UString u){
+    public UBoolean le(UString u) {
         int result = this.string.compareTo(u.string);
         boolean b = result <= 0;
         double conf = calculateConf(u);
         return new UBoolean(b, conf);
     }
 
-    public UBoolean ge(UString u){
+    public UBoolean ge(UString u) {
         int result = this.string.compareTo(u.string);
         boolean b = result >= 0;
         double conf = calculateConf(u);
@@ -240,6 +242,6 @@ public class UString {
      */
     private double calculateConf_05(UString u) {
         double conf = this.sConf * u.sConf; // conf producto de las confianzas de cada string
-        return Double.compare(conf,0.5d) >= 0 ? conf : 0.5d ;
+        return Double.compare(conf, 0.5d) >= 0 ? conf : 0.5d;
     }
 }

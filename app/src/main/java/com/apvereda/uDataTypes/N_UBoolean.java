@@ -22,19 +22,19 @@ public class N_UBoolean implements Cloneable, Comparable<N_UBoolean> {
     }
 
     public N_UBoolean(boolean value) { //"promotes" a boolean value to (value,1.0)
-        this.confidence = value? 1.0d : 0.0d;
+        this.confidence = value ? 1.0d : 0.0d;
         fillSample(sample, confidence);
     }
 
     public N_UBoolean(boolean value, double c) {
-    	if ((c < 0.0) || (c > 1.0) ) throw new IllegalArgumentException("Invalid parameters");
+        if ((c < 0.0) || (c > 1.0)) throw new IllegalArgumentException("Invalid parameters");
         this.confidence = value ? c : 1 - c;
         fillSample(sample, this.confidence);
     }
 
-    public N_UBoolean(boolean[] data){ // Calculate value and confidence for a data
+    public N_UBoolean(boolean[] data) { // Calculate value and confidence for a data
         this.confidence = extractConfidence(data);
-        if(data.length == this.sample.length)
+        if (data.length == this.sample.length)
             this.sample = Arrays.copyOf(data, data.length);
         else // If data length is not equal than sample length, create a new sample with confidence
             fillSample(sample, confidence);
@@ -44,8 +44,8 @@ public class N_UBoolean implements Cloneable, Comparable<N_UBoolean> {
      * Auxiliary operations
      */
 
-    private void fillSample(boolean s[], double c){
-    	if ((c < 0.0) || (c > 1.0) ) throw new IllegalArgumentException("Invalid parameters");
+    private void fillSample(boolean s[], double c) {
+        if ((c < 0.0) || (c > 1.0)) throw new IllegalArgumentException("Invalid parameters");
         for (int i = 0; i < SAMPLESIZE; i++) {
             // s[i] = (rnd.nextDouble() <= c);
             s[i] = Double.compare(rnd.nextDouble(), c) <= 0; // MFB . <= or < ; [0.0, 1.0)
@@ -54,24 +54,24 @@ public class N_UBoolean implements Cloneable, Comparable<N_UBoolean> {
 
     protected double extractConfidence() {
         int numTrue = 0;
-        for (boolean b: this.sample) {
+        for (boolean b : this.sample) {
             if (b) numTrue++; // counting trues
         }
-        return (double)numTrue / sample.length;
+        return (double) numTrue / sample.length;
     }
 
     protected double extractConfidence(boolean[] data) {
         int numTrue = 0;
-        for (boolean b: data) {
+        for (boolean b : data) {
             if (b) numTrue++; // count trues
         }
-        return (double)numTrue / data.length;
+        return (double) numTrue / data.length;
     }
 
 
-     /*
-      *  Getters
-      */
+    /*
+     *  Getters
+     */
 
     public static int getSamplesize() {
         return SAMPLESIZE;
@@ -89,13 +89,13 @@ public class N_UBoolean implements Cloneable, Comparable<N_UBoolean> {
         return Arrays.copyOf(sample, sample.length); // return sample;
     }
 
-   /*
-    * Type operations
-    */
+    /*
+     * Type operations
+     */
 
     public N_UBoolean not() {
         boolean[] notSample = new boolean[sample.length];
-        for (int i = 0; i < notSample.length ; i++) {
+        for (int i = 0; i < notSample.length; i++) {
             notSample[i] = !sample[i];
         }
         return new N_UBoolean(notSample);
@@ -155,9 +155,9 @@ public class N_UBoolean implements Cloneable, Comparable<N_UBoolean> {
     }
 
 
-	/******
-	 * Conversions
-	 */
+    /******
+     * Conversions
+     */
     @Override
     public String toString() {
         return "N_UBoolean{" +
@@ -167,29 +167,29 @@ public class N_UBoolean implements Cloneable, Comparable<N_UBoolean> {
                 '}';
     }
 
-	public boolean toBoolean(){ //
-		return value; //works because it is in canonical form
-	}
-	
-	/**
-	 * Other Methods 
-	 */
+    public boolean toBoolean() { //
+        return value; //works because it is in canonical form
+    }
 
- 	public int hashcode(){ //required for equals()
-		return this.toBoolean()?1:0; 
-	}
+    /**
+     * Other Methods
+     */
 
- 	public N_UBoolean clone() {
-		return new N_UBoolean(this.sample);
-	}
+    public int hashcode() { //required for equals()
+        return this.toBoolean() ? 1 : 0;
+    }
 
-	@Override
-	public int compareTo(N_UBoolean other) {
-		double x = (this.confidence-other.confidence);
-		if (x==0) return 0;
-		if (x<0) return -1;
-		return 1;
-	}
+    public N_UBoolean clone() {
+        return new N_UBoolean(this.sample);
+    }
+
+    @Override
+    public int compareTo(N_UBoolean other) {
+        double x = (this.confidence - other.confidence);
+        if (x == 0) return 0;
+        if (x < 0) return -1;
+        return 1;
+    }
 
 
 }
