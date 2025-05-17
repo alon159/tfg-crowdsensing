@@ -59,7 +59,7 @@ public class DigitalAvatar {
             //MutableDocument relations = new MutableDocument("Relations");
             //relations.setString("privacy", "private");
             try {
-                    avatars.save(avatar);
+                avatars.save(avatar);
                 //Collection relations = database.getCollection("Relations");
                 //if (relations != null)
                 //database.save(relations);
@@ -86,7 +86,10 @@ public class DigitalAvatar {
     }
 
     public MutableDocument getDoc(Collection collection, String doc) {
-        return getDocNM(collection, doc).toMutable();
+        Document document = getDocNM(collection, doc);
+        if (document != null)
+            return document.toMutable();
+        return null;
     }
 
     public Document getDocNM(Collection collection, String doc) {

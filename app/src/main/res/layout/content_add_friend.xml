@@ -11,56 +11,77 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_marginTop="20dp"
         android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp">
+        android:layout_marginTop="20dp"
+        android:layout_marginRight="20dp"
+        android:orientation="vertical">
 
-        <View style="@style/proifleDetailsView" />
+        <View style="@style/profileDetailsView" />
+
         <RelativeLayout style="@style/profileDetailsLayout">
+
             <ImageView
                 android:id="@+id/nameImageView"
-                android:src="@drawable/ic_assignment_ind_black_24dp"
-                style="@style/profileDetailsImage" />
+                style="@style/profileDetailsImage"
+                android:src="@drawable/ic_assignment_ind_black_24dp" />
 
             <TextView
-                android:text="Name"
-                android:layout_toRightOf="@id/nameImageView"
-                style="@style/profileDetailsTextMain"/>
+                style="@style/profileDetailsTextMain"
+                android:layout_toEndOf="@id/nameImageView"
+                android:text="Name" />
 
-            <EditText
-                android:id="@+id/friendname"
+            <com.google.android.material.textfield.TextInputLayout
                 style="@style/profileDetailsMiniText"
-                android:layout_toRightOf="@id/nameImageView"
-                android:layout_marginTop="10sp"
-                android:inputType="textPersonName"
-                android:hint="Developer Name" />
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:layout_marginTop="20sp"
+                android:layout_toEndOf="@id/nameImageView"
+                android:hint="Developer Name">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/friendname"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:inputType="textPersonName" />
+            </com.google.android.material.textfield.TextInputLayout>
 
         </RelativeLayout>
-        <View style="@style/proifleDetailsView" />
 
-        <View style="@style/proifleDetailsView" />
+        <View style="@style/profileDetailsView" />
+
+        <View style="@style/profileDetailsView" />
+
         <RelativeLayout style="@style/profileDetailsLayout">
+
             <ImageView
                 android:id="@+id/mobileImageView"
-                android:src="@drawable/ic_call_black_24dp"
-                style="@style/profileDetailsImage" />
+                style="@style/profileDetailsImage"
+                android:src="@drawable/ic_call_black_24dp" />
 
             <TextView
-                android:text="Mobile"
+                style="@style/profileDetailsTextMain"
                 android:layout_toRightOf="@id/mobileImageView"
-                style="@style/profileDetailsTextMain"/>
+                android:text="Mobile" />
 
-            <EditText
-                android:id="@+id/friendmobile"
+
+            <com.google.android.material.textfield.TextInputLayout
                 style="@style/profileDetailsMiniText"
-                android:layout_toRightOf="@id/mobileImageView"
-                android:layout_marginTop="10sp"
-                android:inputType="phone"
-                android:hint="+91-8129999999" />
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:layout_marginTop="20sp"
+                android:layout_toEndOf="@id/mobileImageView"
+                android:hint="+91-8129999999">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/friendmobile"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:inputType="phone" />
+            </com.google.android.material.textfield.TextInputLayout>
 
         </RelativeLayout>
-        <View style="@style/proifleDetailsView" />
+
+        <View style="@style/profileDetailsView" />
 
         <RelativeLayout style="@style/profileDetailsLayout">
 
@@ -70,43 +91,62 @@
                 android:src="@drawable/ic_email_black_24dp" />
 
             <TextView
-                android:text="Email"
-                android:layout_toRightOf="@id/emailImageView"
-                style="@style/profileDetailsTextMain" />
+                style="@style/profileDetailsTextMain"
+                android:layout_toEndOf="@id/emailImageView"
+                android:text="Email" />
 
-            <EditText
-                android:id="@+id/friendemail"
+            <com.google.android.material.textfield.TextInputLayout
                 style="@style/profileDetailsMiniText"
-                android:layout_toRightOf="@id/emailImageView"
-                android:layout_marginTop="10sp"
-                android:inputType="textEmailAddress"
-                android:hint="developer@appsnipp.com" />
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:layout_marginTop="20sp"
+                android:layout_toEndOf="@id/emailImageView"
+                android:hint="developer@appsnipp.com">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/friendemail"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:inputType="textEmailAddress" />
+            </com.google.android.material.textfield.TextInputLayout>
 
         </RelativeLayout>
-        <View style="@style/proifleDetailsView" />
+
+        <View style="@style/profileDetailsView" />
 
         <RelativeLayout style="@style/profileDetailsLayout">
+
             <ImageView
                 android:id="@+id/addressImageView"
-                android:src="@drawable/ic_android_black_24dp"
-                style="@style/profileDetailsImage" />
+                style="@style/profileDetailsImage"
+                android:src="@drawable/ic_android_black_24dp" />
 
             <TextView
                 android:id="@+id/addressTextView"
-                android:text="OneSignal Token"
-                android:layout_toRightOf="@id/addressImageView"
-                style="@style/profileDetailsTextMain" />
+                style="@style/profileDetailsTextMain"
+                android:layout_toEndOf="@id/addressImageView"
+                android:text="OneSignal Token" />
 
-            <EditText
-                android:id="@+id/friendonesignal"
+            <com.google.android.material.textfield.TextInputLayout
                 style="@style/profileDetailsMiniText"
-                android:layout_toRightOf="@id/addressImageView"
-                android:layout_marginTop="10sp"
-                android:inputType="text"
-                android:hint="XXX-XXX-XXX-XXX"/>
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:layout_marginTop="20sp"
+                android:layout_toEndOf="@id/addressImageView"
+                android:hint="XXX-XXX-XXX-XXX">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/friendonesignal"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:inputType="text" />
+            </com.google.android.material.textfield.TextInputLayout>
+
 
         </RelativeLayout>
-        <View style="@style/proifleDetailsView" />
+
+        <View style="@style/profileDetailsView" />
+
         <RelativeLayout style="@style/profileDetailsLayout">
             <!--TextView
                 android:id="@+id/functionalTextView"
@@ -119,20 +159,24 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10sp"
                 android:numStars="5"
-                android:stepSize="1"/>
+                android:stepSize="1" />
 
         </RelativeLayout>
-        <View style="@style/proifleDetailsView" />
-        <!--RelativeLayout style="@style/profileDetailsLayout">
-            <RatingBar
-                android:id="@+id/refRatingBar"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:numStars="5"
-                android:stepSize="1"/>
 
-        </RelativeLayout>
-        <View style="@style/proifleDetailsView" /-->
+        <View style="@style/profileDetailsView" />
+
+<!--        <RelativeLayout style="@style/profileDetailsLayout">-->
+
+<!--            <RatingBar-->
+<!--                android:id="@+id/refRatingBar"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:numStars="5"-->
+<!--                android:stepSize="1" />-->
+
+<!--        </RelativeLayout>-->
+
+<!--        <View style="@style/profileDetailsView" />-->
 
 
     </LinearLayout>

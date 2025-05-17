@@ -14,6 +14,7 @@ import com.apvereda.db.AbstractEntity;
 import com.apvereda.db.Entity;
 import com.apvereda.db.Value;
 import com.apvereda.digitalavatars.R;
+import com.apvereda.uDataTypes.EntityType;
 
 import java.util.List;
 
@@ -21,11 +22,13 @@ import java.util.List;
 public class SubscriptionsAdapter extends BaseAdapter {
     Activity context;
     List<AbstractEntity> data;
+    EntityType type;
 
-    public SubscriptionsAdapter(Activity context, List<AbstractEntity> data) {
+    public SubscriptionsAdapter(Activity context, List<AbstractEntity> data, EntityType type) {
         super();
         this.context = context;
         this.data = data;
+        this.type = type;
     }
 
     public void setData(List<AbstractEntity> data) {
@@ -51,6 +54,7 @@ public class SubscriptionsAdapter extends BaseAdapter {
                 Intent i = new Intent(view.getContext(), SurveyActivity.class);
                 i.putExtra("survey",((Value)poll.get("survey")).get()+"");
                 i.putExtra("pollId",poll.getName());
+                i.putExtra("type",type);
                 view.getContext().startActivity(i);
             }
         });

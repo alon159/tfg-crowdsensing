@@ -109,5 +109,7 @@
     <string name="next">Next</string>
     <string name="previous">Previous</string>
     <string name="default_notification_channel_id" translatable="false">fcm_default_channel</string>
+    <string name="request_assistance_title">ASSISTANCE REQUESTS</string>
+    <string name="offer_assistance_title">ASSISTANCE OFFERS</string>
 
 </resources>

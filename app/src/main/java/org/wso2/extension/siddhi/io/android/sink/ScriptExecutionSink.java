@@ -23,6 +23,7 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
+import android.view.View;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -31,6 +32,8 @@ import com.apvereda.db.AbstractEntity;
 import com.apvereda.db.Avatar;
 import com.apvereda.db.Entity;
 import com.apvereda.db.Value;
+import com.apvereda.digitalavatars.ui.home.HomeFragment;
+import com.apvereda.digitalavatars.ui.home.HomeViewModel;
 import com.apvereda.uDataTypes.EntityType;
 import com.apvereda.utils.DigitalAvatar;
 import com.apvereda.utils.DigitalAvatarController;
@@ -68,6 +71,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.TreeMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -142,19 +146,30 @@ public class ScriptExecutionSink extends Sink {
             Log.i("ScriptExecutionSink", "Invalid type of poll");
             return;
         }
+        HomeViewModel vm = HomeViewModel.getInstance();
+        switch (type){
+            case OFFER:
+                if (Objects.requireNonNull(vm.getOfferBadgeVisibility().getValue()) != View.VISIBLE)
+                    vm.setOfferBadgeVisibility(View.VISIBLE);
+                break;
+            case REQUEST:
+                if (Objects.requireNonNull(vm.getRequestBadgeVisibility().getValue()) != View.VISIBLE)
+                    vm.setRequestBadgeVisibility(View.VISIBLE);
+                break;
+        }
         DigitalAvatarController dac = new DigitalAvatarController();
         List crowdpolls = new ArrayList<AbstractEntity>();
         lock.lock();
         try {
             crowdpolls = dac.getAll("DA-Poll" + event.get("pollId"), type);
-            if (crowdpolls.size() == 0) {
+            if (crowdpolls.isEmpty()) {
                 createPollEntity(event);
             }
         } finally {
             lock.unlock();
         }
         //List crowdpolls = dac.getAll("DA-Poll"+event.get("pollId"));
-        if (crowdpolls.size() == 0) {
+        if (crowdpolls.isEmpty()) {
             //Log.i("DA-Crowdsensing", "Non existing Poll received");
             //createPollEntity(event);
             Log.i("DA-Crowdsensing", "Poll received with pollId " + event.get("pollId") + " and type " + event.get("type"));

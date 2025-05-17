@@ -37,9 +37,10 @@ public class PollsReceiver extends BroadcastReceiver {
             if (intent.getAction().equals("receivePollResponse")) {
                 String result = intent.getStringExtra("result");
                 String count = intent.getStringExtra("count");
+                EntityType type = EntityType.fromText(intent.getStringExtra("type"));
                 result = "{count:"+count+", result:"+result+"}";
                 DigitalAvatarController dac = new DigitalAvatarController();
-                List polls = dac.getAll("DA-Poll"+intent.getStringExtra("pollId"), EntityType.OFFER);
+                List polls = dac.getAll("DA-Poll"+intent.getStringExtra("pollId"), type);
                 if(polls.size() != 0) {
                     Entity poll = (Entity) polls.get(0);
                     Value resultValue = (Value) poll.get("results");

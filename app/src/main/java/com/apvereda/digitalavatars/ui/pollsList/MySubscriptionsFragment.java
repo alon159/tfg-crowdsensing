@@ -1,19 +1,26 @@
 package com.apvereda.digitalavatars.ui.pollsList;
 
+import static com.apvereda.uDataTypes.EntityType.OFFER;
+
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.apvereda.db.AbstractEntity;
 import com.apvereda.db.Entity;
 import com.apvereda.digitalavatars.R;
+import com.apvereda.digitalavatars.ui.home.HomeViewModel;
 import com.apvereda.uDataTypes.EntityType;
 import com.apvereda.utils.DigitalAvatar;
 import com.apvereda.utils.DigitalAvatarController;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
@@ -23,13 +30,14 @@ public class MySubscriptionsFragment extends AppCompatActivity {
     SubscriptionsAdapter adapter;
     ListView list;
     List<AbstractEntity> surveys;
+    EntityType type;
 
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.fragment_sns_subscriptions_list);
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        //Toolbar toolbar = findViewById(R.id.toolbar);
+        //setSupportActionBar(toolbar);
 
         /*CollapsingToolbarLayout layout = root.findViewById(R.id.friend_list_toolbar_layout);
         Toolbar toolbar = root.findViewById(R.id.friend_list_toolbar);
@@ -43,8 +51,20 @@ public class MySubscriptionsFragment extends AppCompatActivity {
                 drawer.openDrawer(GravityCompat.START);
             }
         });*/
+        type = getIntent().getExtras().getParcelable("type", EntityType.class);
+        HomeViewModel vm = HomeViewModel.getInstance();
+        switch (type){
+            case OFFER:
+                if (Objects.requireNonNull(vm.getOfferBadgeVisibility().getValue()) != View.INVISIBLE)
+                    vm.setOfferBadgeVisibility(View.INVISIBLE);
+                break;
+            case REQUEST:
+                if (Objects.requireNonNull(vm.getRequestBadgeVisibility().getValue()) != View.INVISIBLE)
+                    vm.setRequestBadgeVisibility(View.INVISIBLE);
+                break;
+        }
         DigitalAvatarController dac = new DigitalAvatarController();
-        List<AbstractEntity> aux = dac.getAllLike("DA-Poll", EntityType.OFFER);
+        List<AbstractEntity> aux = dac.getAllLike("DA-Poll", type);
         surveys = new ArrayList<>();
         for(int i=0; i<aux.size(); i++){
             Entity eaux = (Entity) aux.get(i);
@@ -52,14 +72,23 @@ public class MySubscriptionsFragment extends AppCompatActivity {
                 surveys.add(eaux);
             }
         }
-        adapter = new SubscriptionsAdapter(this,surveys);
-        list = (ListView) findViewById(R.id.listTrips);
+        TextView title = findViewById(R.id.subs_title);
+        switch (type){
+            case OFFER:
+                title.setText(R.string.offer_assistance_title);
+                break;
+            case REQUEST:
+                title.setText(R.string.request_assistance_title);
+                break;
+        }
+        adapter = new SubscriptionsAdapter(this,surveys, type);
+        list = findViewById(R.id.listTrips);
         list.setAdapter(adapter);
     }
 
     public void updateTrips(){
         DigitalAvatarController dac = new DigitalAvatarController();
-        surveys = dac.getAllLike("DA-Poll", EntityType.OFFER);
+        surveys = dac.getAllLike("DA-Poll", type);
         for(AbstractEntity e : surveys){
             Entity aux = (Entity) e;
             if(aux.getValues().containsKey("myresult")){

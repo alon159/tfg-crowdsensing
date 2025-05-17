@@ -35,6 +35,7 @@ public class SurveyActivity extends AppCompatActivity {
         Bundle extras = getIntent().getExtras();
         String survey = extras.getString("survey");
         String pollId= extras.getString("pollId");
+        EntityType type = extras.getParcelable("type", EntityType.class);
         Log.i("DA-CrowdPoll", "Survey: "+survey);
         JSONArray jsonsurvey;
         try {
@@ -96,7 +97,7 @@ public class SurveyActivity extends AppCompatActivity {
                     }
                     result = result.substring(0,result.length()-2)+"}";
                     DigitalAvatarController dac = new DigitalAvatarController();
-                    Entity poll = (Entity) dac.getAll(pollId, EntityType.OFFER).get(0);
+                    Entity poll = (Entity) dac.getAll(pollId, type).get(0);
                     String[] privacy =  {"public,public"};
                     poll.set("myresult",new Value("myresult","String",privacy, new Date(), result));
                     Log.i("DA-Crowd", "Entity submmited: "+ poll.getValues().keySet());

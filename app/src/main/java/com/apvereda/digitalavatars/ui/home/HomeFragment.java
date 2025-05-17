@@ -16,12 +16,14 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 
 import com.apvereda.digitalavatars.DrawerActivity;
 import com.apvereda.digitalavatars.R;
 import com.apvereda.digitalavatars.ui.pollsList.MySubscriptionsFragment;
 import com.apvereda.receiver.PollsReceiver;
+import com.apvereda.uDataTypes.EntityType;
 import com.apvereda.utils.SiddhiService;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
@@ -50,10 +52,15 @@ public class HomeFragment extends Fragment {
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        homeViewModel =
-                ViewModelProviders.of(this).get(HomeViewModel.class);
+        homeViewModel = new ViewModelProvider(requireActivity()).get(HomeViewModel.class);
         root = inflater.inflate(R.layout.fragment_home, container, false);
-        //final TextView textView = root.findViewById(R.id.text_home);
+        HomeViewModel.setInstance(homeViewModel);
+        View offerBadge = root.findViewById(R.id.offerBadge);
+        View requestBadge = root.findViewById(R.id.requestBadge);
+        homeViewModel.setOfferBadgeVisibility(offerBadge.getVisibility());
+        homeViewModel.setRequestBadgeVisibility(requestBadge.getVisibility());
+        homeViewModel.getOfferBadgeVisibility().observe(getViewLifecycleOwner(), offerBadge::setVisibility);
+        homeViewModel.getRequestBadgeVisibility().observe(getViewLifecycleOwner(), requestBadge::setVisibility);
         setRetainInstance(true);
         if(savedInstanceState !=null) {
             //textView.setText(savedInstanceState.getString("text"));
@@ -67,11 +74,21 @@ public class HomeFragment extends Fragment {
         }
         apps = new ArrayList<String>();
         appnames = new ArrayList<String>();
-        Button subscriptions = root.findViewById(R.id.subscriptionsbtn);
-        subscriptions.setOnClickListener(new View.OnClickListener() {
+        Button offerbutton = root.findViewById(R.id.offerBtn);
+        offerbutton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent i = new Intent(getActivity(), MySubscriptionsFragment.class);
+                i.putExtra("type", EntityType.OFFER);
+                startActivity(i);
+            }
+        });
+        Button requestbutton = root.findViewById(R.id.requestBtn);
+        requestbutton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent i = new Intent(getActivity(), MySubscriptionsFragment.class);
+                i.putExtra("type", EntityType.REQUEST);
                 startActivity(i);
             }
         });

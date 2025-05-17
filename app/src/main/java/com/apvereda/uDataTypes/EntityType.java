@@ -2,7 +2,7 @@ package com.apvereda.uDataTypes;
 
 public enum EntityType {
     OFFER("offer"),
-    ASSIST("assist");
+    REQUEST("request");
 
     private final String text;
 

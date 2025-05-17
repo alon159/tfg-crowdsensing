@@ -1,21 +1,21 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
-        <!-- Customize your theme here. -->
+    <style name="AppTheme" parent="Theme.Material3.DayNight.NoActionBar">
+        <!-- Colores personalizados -->
         <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
+        <item name="colorPrimaryContainer">@color/colorPrimaryDark</item>
+        <item name="colorSecondary">@color/colorAccent</item>
+        <item name="android:windowLightStatusBar">false</item> <!-- Opcional: para barra estado clara u oscura -->
     </style>
 
-    <style name="AppTheme.NoActionBar">
-        <item name="windowActionBar">false</item>
-        <item name="windowNoTitle">true</item>
+    <style name="AppTheme.NoActionBar" parent="AppTheme">
+        <!-- Esto puede quedar vacío porque ya no se usa windowActionBar ni windowNoTitle aquí -->
     </style>
 
-    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.Material3.Dark.ActionBar" />
 
-    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.Material3.Light" />
 
     <style name="parent">
         <item name="android:layout_width">match_parent</item>
@@ -28,7 +28,7 @@
         <item name="android:textStyle">bold</item>
     </style>
 
-    <style name="textInputHintStyle" parent="TextAppearance.AppCompat.Medium.Inverse">
+    <style name="textInputHintStyle" parent="TextAppearance.Material3.BodyMedium">
         <item name="android:textColorHint">@color/blackTextColor</item>
         <item name="android:textColor">@color/blackTextColor</item>
         <item name="android:textSize">17sp</item>
@@ -47,9 +47,9 @@
     <style name="profileDetailsImage">
         <item name="android:layout_width">40dp</item>
         <item name="android:layout_height">40dp</item>
-        <item name="android:layout_alignParentTop">true</item>
         <item name="android:layout_alignParentLeft">true</item>
-        <item name="android:color">@color/blackTextColor</item>
+        <item name="android:layout_centerVertical">true</item>
+        <item name="android:tint">@color/blackTextColor</item>
     </style>
 
     <style name="profileDetailsTextMain" parent="viewParent">
@@ -66,11 +66,26 @@
         <item name="android:layout_marginLeft">10dp</item>
     </style>
 
-    <style name="proifleDetailsView">
+    <style name="profileDetailsView">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">2dp</item>
         <item name="android:background">@color/profileAccentColor</item>
         <item name="android:layout_marginTop">5dp</item>
     </style>
+
+    <style name="Theme.MyApp" parent="Theme.Material3.DayNight.NoActionBar">
+        <!-- Aplica esquinas redondeadas a todos los botones -->
+        <item name="materialButtonStyle">@style/Widget.MyApp.Button</item>
+    </style>
+
+    <style name="Widget.MyApp.Button" parent="Widget.Material3.Button">
+        <item name="shapeAppearance">@style/ShapeAppearance.MyApp.MediumComponent</item>
+    </style>
+
+    <style name="ShapeAppearance.MyApp.MediumComponent" parent="ShapeAppearance.Material3.MediumComponent">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">16dp</item>
+    </style>
+
 
 </resources>
