@@ -55,6 +55,7 @@ public class OneSignalService {
             if(rec.length() > 0) {
                 rec.substring(0, rec.length() - 1);
                 JSONObject notificationContent = new JSONObject();
+                notificationContent.put("app_id", ONESIGNAL_APP_ID);
                 notificationContent.put("contents", new JSONObject().put("en", text));
                 notificationContent.put("include_aliases", new JSONObject().put("onesignal_id", new JSONArray(rec)));
                 notificationContent.put("target_channel", "push");
@@ -81,18 +82,20 @@ public class OneSignalService {
                 OkHttpClient client = new OkHttpClient();
 
                 RequestBody body = RequestBody.create(
-                        MediaType.parse("application/json; charset=utf-8"),
-                        jsonBody.toString()
+                        jsonBody.toString(),
+                        MediaType.parse("application/json; charset=utf-8")
                 );
 
                 Request request = new Request.Builder()
                         .url(ONESIGNAL_API_URL)
+                        .addHeader("accept", "application/json")
                         .addHeader("Authorization", "Key " + ONESIGNAL_API_KEY)
                         .post(body)
                         .build();
 
                 Response response = client.newCall(request).execute();
-                System.out.println("OneSignal Response: " + response.body().string());
+                if(response.body() != null)
+                    System.out.println("OneSignal Response: " + response.body().string());
 
             } catch (Exception e) {
                 e.printStackTrace();

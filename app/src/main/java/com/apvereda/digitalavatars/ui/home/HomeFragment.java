@@ -122,6 +122,14 @@ public class HomeFragment extends Fragment {
                 }
             }
         });
+        FloatingActionButton createPollButton = root.findViewById(R.id.createPollButton);
+        createPollButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent i = new Intent(view.getContext(), CreateSurveyActivity.class);
+                startActivity(i);
+            }
+        });
         root.findViewById(R.id.fabplay).setVisibility(View.VISIBLE);
         root.findViewById(R.id.fabstop).setVisibility(View.GONE);
         return root;

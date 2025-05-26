@@ -111,5 +111,9 @@
     <string name="default_notification_channel_id" translatable="false">fcm_default_channel</string>
     <string name="request_assistance_title">ASSISTANCE REQUESTS</string>
     <string name="offer_assistance_title">ASSISTANCE OFFERS</string>
+    <string name="accept_offer">Accept</string>
+    <string name="decline_offer">Decline</string>
+    <string name="default_timeout">60000</string>
+    <string name="default_scope">5</string>
 
 </resources>

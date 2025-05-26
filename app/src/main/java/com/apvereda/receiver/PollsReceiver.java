@@ -12,6 +12,12 @@ import com.apvereda.db.Entity;
 import com.apvereda.db.Value;
 import com.apvereda.uDataTypes.EntityType;
 import com.apvereda.utils.DigitalAvatarController;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+
+import org.json.JSONObject;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -56,9 +62,39 @@ public class PollsReceiver extends BroadcastReceiver {
                     printCSV(context, "Poll response received", new Date().toString());
                     Toast toast = Toast.makeText(context, "Poll response received: \"" + result + "\"", Toast.LENGTH_LONG);
                     toast.show();
+                    String pollTokenID = intent.getStringExtra("tokenID");
+                    if (pollTokenID != null && pollTokenID.equals(Avatar.getAvatar().getIdToken())){
+                        updateresults(poll, pollResult);
+                    }
                 }
             }
         }
+
+    private void updateresults(Entity poll, String result) {
+        try {
+            JSONObject pollResult = new JSONObject(result);
+            FirebaseFirestore db = FirebaseFirestore.getInstance();
+            db.collection("pollResults")
+                    .add(pollResult)
+                    .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                        @Override
+                        public void onSuccess(DocumentReference documentReference) {
+                            String[] privacy = {"public,public"};
+                            poll.set("pollresultsid", new Value("pollresultsid", "String", privacy, new Date(), documentReference.getId()));
+                            Log.d("PollReceiver", "DocumentSnapshot added with ID: " + documentReference.getId());
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(Exception e) {
+                            Log.w("PollReceiver", "Error adding results to Firestore", e);
+                        }
+                    });
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
     public void printCSV(Context context, String message, String time){
         try {

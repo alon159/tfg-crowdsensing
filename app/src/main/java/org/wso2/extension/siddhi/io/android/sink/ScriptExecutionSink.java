@@ -32,6 +32,7 @@ import com.apvereda.db.AbstractEntity;
 import com.apvereda.db.Avatar;
 import com.apvereda.db.Entity;
 import com.apvereda.db.Value;
+import com.apvereda.digitalavatars.R;
 import com.apvereda.digitalavatars.ui.home.HomeFragment;
 import com.apvereda.digitalavatars.ui.home.HomeViewModel;
 import com.apvereda.uDataTypes.EntityType;
@@ -147,7 +148,7 @@ public class ScriptExecutionSink extends Sink {
             return;
         }
         HomeViewModel vm = HomeViewModel.getInstance();
-        switch (type){
+        switch (type) {
             case OFFER:
                 if (Objects.requireNonNull(vm.getOfferBadgeVisibility().getValue()) != View.VISIBLE)
                     vm.setOfferBadgeVisibility(View.VISIBLE);
@@ -222,7 +223,7 @@ public class ScriptExecutionSink extends Sink {
         i.putExtra("pollId", (String) event.get("pollId"));
         i.putExtra("script", (String) event.get("script"));
         i.putExtra("survey", (String) event.get("survey"));
-        i.putExtra("callback", "onesignalid: " + Avatar.getAvatar().getOneSignalID());
+        i.putExtra("callback", Avatar.getAvatar().getOneSignalID());
         long nextTimeout = Long.parseLong((String) event.get("timeout")) / 2;
         i.putExtra("timeout", "" + nextTimeout);
         SiddhiAppService.getServiceInstance().sendBroadcast(i);
@@ -289,43 +290,48 @@ public class ScriptExecutionSink extends Sink {
                 DigitalAvatarController dac = new DigitalAvatarController();
                 Entity crowdpoll = (Entity) dac.getAll("DA-Poll" + poll, type).get(0);
                 Log.i("DA-Crowdsensing", "Poll acquired: " + crowdpoll.getUid());
-                if (crowdpoll.getValues().containsKey("myresult")) {
-                    //scriptUrl = "https://raw.githubusercontent.com/alon159/tfg-crowdsensing/refs/heads/main/script.bsh"
-                    String script = getScript();
-                    final Interpreter i = new Interpreter();
-                    i.set("dac", new DigitalAvatarController());
-                    i.set("poll", poll);
-                    //i.set("myresult", ((Value)crowdpoll.get("myresult")).get()+"");
-                    Log.i("DA-Crowdsensing", "Script acquired " + script);
-                    printCSV(context, "Script acquired", new Date().toString());
-                    i.eval(script);
-                    // RECOGER RESULTADO SCRIPT
-                    //String contactsResult = (String) ((Value) crowdpoll.get("results")).get();
-                    String result = (String) i.get("result");
-                    int count = (Integer) i.get("count");
-                    // SI SOY ESCLAVO MANDO RESPONSE AL MASTER
-                    if (callback.contains("onesignalid: ")) {
-                        callback = callback.replace("onesignalid: ", "");
-                        Intent intent = new Intent("pollResponse");
-                        intent.putExtra("recipient", callback);
-                        intent.putExtra("pollId", poll);
-                        intent.putExtra("count", count + "");//
-                        intent.putExtra("result", result);
-                        SiddhiAppService.getServiceInstance().sendBroadcast(intent);
-                        Log.i("DA-Crowdsensing", "Slave sending result to sender " + callback);
-                        printCSV(context, "Slave sending result to " + callback + ": " + result, new Date().toString());
-                        Toast toast = Toast.makeText(context, "Sending results: " + result, Toast.LENGTH_LONG);
-                    } else { // SI SOY EL MASTER, ENTONCES MANDO RESPUESTA DIRECTO AL SERVIDOR
-                        callback = callback.replace("server_url: ", "");
-                        Log.i("DA-Crowdsensing", "Master sending result to server " + callback);
-                        printCSV(context, "Master sending result to " + callback + ": " + result, new Date().toString());
-                        Log.i("DA-Crowdsensing", "Result: " + result);
-                        //Log.i("DA-Crowdsensing", "Contacts Results: " + contactsResult);
-                        Toast toast = Toast.makeText(context, "Sending results: " + result, Toast.LENGTH_LONG);
-                        toast.show();
-                        //postHttpRequest(callback, result);
-                    }
+                if (!crowdpoll.getValues().containsKey("myresult")) {
+                    String result = "{ result: no_answer}";
+                    String[] privacy = {"public,public"};
+                    crowdpoll.set("myresult", new Value("myresult", "String", privacy, new Date(), result));
                 }
+                //scriptUrl = "https://raw.githubusercontent.com/alon159/tfg-crowdsensing/refs/heads/main/script.bsh"
+                String script = getScript();
+                final Interpreter i = new Interpreter();
+                i.set("dac", new DigitalAvatarController());
+                i.set("poll", poll);
+                //i.set("myresult", ((Value)crowdpoll.get("myresult")).get()+"");
+                Log.i("DA-Crowdsensing", "Script acquired " + script);
+                printCSV(context, "Script acquired", new Date().toString());
+                i.eval(script);
+                // RECOGER RESULTADO SCRIPT
+                //String contactsResult = (String) ((Value) crowdpoll.get("results")).get();
+                String result = (String) i.get("result");
+                // SI SOY ESCLAVO MANDO RESPONSE AL MASTER
+                //if (callback.contains("onesignalid: ")) {
+                //callback = callback.replace("onesignalid: ", "");
+                Intent intent = new Intent("pollResponse");
+                intent.putExtra("recipient", callback);
+                intent.putExtra("pollId", poll);
+                intent.putExtra("result", result);
+                SiddhiAppService.getServiceInstance().sendBroadcast(intent);
+                Log.i("DA-Crowdsensing", "Slave sending result to sender " + callback);
+                printCSV(context, "Slave sending result to " + callback + ": " + result, new Date().toString());
+                Toast toast = Toast.makeText(context, "Sending results: " + result, Toast.LENGTH_LONG);
+                toast.show();
+
+//                    } else { // SI SOY EL MASTER, ENTONCES MANDO RESPUESTA DIRECTO AL SERVIDOR
+//                        //CAMBIAR ESTO PARA QUE SE GUARDEN EN LA ENTITY CORRESPONDIENTE
+//                        callback = callback.replace("server_url: ", "");
+//                        Log.i("DA-Crowdsensing", "Master sending result to server " + callback);
+//                        printCSV(context, "Master sending result to " + callback + ": " + result, new Date().toString());
+//                        Log.i("DA-Crowdsensing", "Result: " + result);
+//                        //Log.i("DA-Crowdsensing", "Contacts Results: " + contactsResult);
+//                        Toast toast = Toast.makeText(context, "Sending results: " + result, Toast.LENGTH_LONG);
+//                        toast.show();
+//                        //postHttpRequest(callback, result);
+                //}
+                //}
             } catch (EvalError evalError) {
                 evalError.printStackTrace();
             } catch (MalformedURLException e) {
@@ -350,36 +356,36 @@ public class ScriptExecutionSink extends Sink {
             return script;
         }
 
-        private void postHttpRequest(String request, String pollResult) {
-            String result = "";
-            try {
-                String urlParameters = "pollResult=" + pollResult;
-                byte[] postData = urlParameters.getBytes(StandardCharsets.UTF_8);
-                int postDataLength = postData.length;
-                URL url = new URL(request);
-                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-                conn.setDoOutput(true);
-                conn.setInstanceFollowRedirects(false);
-                conn.setRequestMethod("POST");
-                conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
-                conn.setRequestProperty("charset", "utf-8");
-                conn.setRequestProperty("Content-Length", Integer.toString(postDataLength));
-                conn.setUseCaches(false);
-                try (DataOutputStream wr = new DataOutputStream(conn.getOutputStream())) {
-                    wr.write(postData);
-                    wr.close();
-                }
-                BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-                result = br.readLine();
-                br.close();
-            } catch (ProtocolException e) {
-                e.printStackTrace();
-            } catch (MalformedURLException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
+//        private void postHttpRequest(String request, String pollResult) {
+//            String result = "";
+//            try {
+//                String urlParameters = "pollResult=" + pollResult;
+//                byte[] postData = urlParameters.getBytes(StandardCharsets.UTF_8);
+//                int postDataLength = postData.length;
+//                URL url = new URL(request);
+//                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+//                conn.setDoOutput(true);
+//                conn.setInstanceFollowRedirects(false);
+//                conn.setRequestMethod("POST");
+//                conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+//                conn.setRequestProperty("charset", "utf-8");
+//                conn.setRequestProperty("Content-Length", Integer.toString(postDataLength));
+//                conn.setUseCaches(false);
+//                try (DataOutputStream wr = new DataOutputStream(conn.getOutputStream())) {
+//                    wr.write(postData);
+//                    wr.close();
+//                }
+//                BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+//                result = br.readLine();
+//                br.close();
+//            } catch (ProtocolException e) {
+//                e.printStackTrace();
+//            } catch (MalformedURLException e) {
+//                e.printStackTrace();
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+//        }
 
         public void setCallback(String callback) {
             this.callback = callback;
