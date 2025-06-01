@@ -7,6 +7,7 @@ import android.os.Environment;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.apvereda.db.AbstractEntity;
 import com.apvereda.db.Avatar;
 import com.apvereda.db.Entity;
 import com.apvereda.db.Value;
@@ -17,13 +18,17 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import com.google.gson.Gson;
+
 import org.json.JSONObject;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class PollsReceiver extends BroadcastReceiver {
 
@@ -33,21 +38,14 @@ public class PollsReceiver extends BroadcastReceiver {
 
     @Override
         public void onReceive(Context context, Intent intent) {
-            /**
-             *  [
-             *      {count:2, result:{track1:2,track2:2}},
-             *      {count:4, result:{track1:4,track2:2}}
-             *  ]
-             */
-            int q01 =0;
+            Log.i("DA-Crowdsensing", "Poll response received");
             if (intent.getAction().equals("receivePollResponse")) {
+                String pollId = intent.getStringExtra("pollId");
                 String result = intent.getStringExtra("result");
-                String count = intent.getStringExtra("count");
                 EntityType type = EntityType.fromText(intent.getStringExtra("type"));
-                result = "{count:"+count+", result:"+result+"}";
                 DigitalAvatarController dac = new DigitalAvatarController();
-                List polls = dac.getAll("DA-Poll"+intent.getStringExtra("pollId"), type);
-                if(polls.size() != 0) {
+                List<AbstractEntity> polls = dac.getAll("DA-Poll"+pollId, type);
+                if(!polls.isEmpty()) {
                     Entity poll = (Entity) polls.get(0);
                     Value resultValue = (Value) poll.get("results");
                     String pollResult = (String) (resultValue).get();
@@ -63,16 +61,23 @@ public class PollsReceiver extends BroadcastReceiver {
                     Toast toast = Toast.makeText(context, "Poll response received: \"" + result + "\"", Toast.LENGTH_LONG);
                     toast.show();
                     String pollTokenID = intent.getStringExtra("tokenID");
+                    Log.d("PollsReceiver", "pollTokenID: "+pollTokenID);
                     if (pollTokenID != null && pollTokenID.equals(Avatar.getAvatar().getIdToken())){
-                        updateresults(poll, pollResult);
+                        updateresults(poll, pollId, result);
                     }
                 }
             }
         }
 
-    private void updateresults(Entity poll, String result) {
+    private void updateresults(Entity poll, String pollId, String result) {
+        Log.i("PollsReceiver", "Uploading poll results");
         try {
-            JSONObject pollResult = new JSONObject(result);
+            //JSONObject polljson = new JSONObject(result);
+            Gson gson = new Gson();
+            Map<String, Object> polljson = gson.fromJson(result, Map.class);
+            Map<String, Object> pollResult = new HashMap<>();
+            pollResult.put("pollId", pollId);
+            pollResult.put("result", polljson);
             FirebaseFirestore db = FirebaseFirestore.getInstance();
             db.collection("pollResults")
                     .add(pollResult)

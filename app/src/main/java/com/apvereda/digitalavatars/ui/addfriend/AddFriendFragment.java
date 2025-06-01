@@ -95,7 +95,7 @@ public class AddFriendFragment extends Fragment {
                 //dictionary.setString("Email", email.getText().toString());
                 TextView onesignal = root.findViewById(R.id.friendonesignal);
 
-                RatingBar rating = root.findViewById(R.id.ratingBar);
+                //RatingBar rating = root.findViewById(R.id.ratingBar);
                 //RatingBar ratingref = root.findViewById(R.id.refRatingBar);
                 //dictionary.setString("IDOneSignal", onesignal.getText().toString());
                 //MutableDocument doc = da.getDoc("Relations");
@@ -104,22 +104,22 @@ public class AddFriendFragment extends Fragment {
                 Contact c = new Contact(email.getText().toString(), name.getText().toString(),
                         "", phone.getText().toString(), onesignal.getText().toString(), "uid");
                 //Log.i("Digital Avatar", "Tengo un nuevo amigo:"+c.getEmail());
-                SBoolean trust = SBoolean.UNCERTAIN;
-                SBoolean referral = SBoolean.UNCERTAIN;
-                switch (Math.round(rating.getRating())){
-                    case 0: trust = SBoolean.UNCERTAIN;
-                        break;
-                    case 1: trust = new SBoolean(0,1,0,0.5);
-                        break;
-                    case 2: trust = new SBoolean(0,0.5,0.5,0.5);
-                        break;
-                    case 3: trust = new SBoolean(0,0,1,0.5);
-                        break;
-                    case 4: trust = new SBoolean(0.5,0,0.5,0.5);
-                        break;
-                    case 5: trust = new SBoolean(1,0,0,0.5);
-                        break;
-                }
+//                SBoolean trust = SBoolean.UNCERTAIN;
+//                SBoolean referral = SBoolean.UNCERTAIN;
+//                switch (Math.round(rating.getRating())){
+//                    case 0: trust = SBoolean.UNCERTAIN;
+//                        break;
+//                    case 1: trust = new SBoolean(0,1,0,0.5);
+//                        break;
+//                    case 2: trust = new SBoolean(0,0.5,0.5,0.5);
+//                        break;
+//                    case 3: trust = new SBoolean(0,0,1,0.5);
+//                        break;
+//                    case 4: trust = new SBoolean(0.5,0,0.5,0.5);
+//                        break;
+//                    case 5: trust = new SBoolean(1,0,0,0.5);
+//                        break;
+//                }
                 /*switch (Math.round(ratingref.getRating())){
                     case 0: referral = null;
                         break;
@@ -134,88 +134,89 @@ public class AddFriendFragment extends Fragment {
                     case 5: referral = new SBoolean(1,0,0,0.5);
                         break;
                 }*/
-                new Thread(new MyRunnable(c, trust, referral)).start();
+                //new Thread(new MyRunnable(c, trust, referral)).start();
+                Contact.createContact(c);
                 Toast toast1 = Toast.makeText(getContext(),"Friend Added", Toast.LENGTH_LONG);
                 toast1.show();
                 name.setText("");
                 phone.setText("");
                 email.setText("");
                 onesignal.setText("");
-                rating.setRating(0);
+                //rating.setRating(0);
                 //Log.i("Digital Avatar", "Estos son mis amigos:"+doc.getKeys());
             }
         });
         return root;
     }
 
-    private String postHttpRequest(String request, String email){
-        String result ="";
-        try {
-            String urlParameters  = "email="+email;
-            byte[] postData       = urlParameters.getBytes( StandardCharsets.UTF_8 );
-            int    postDataLength = postData.length;
-            URL url            = new URL( request );
-            HttpURLConnection conn= (HttpURLConnection) url.openConnection();
-            conn.setDoOutput( true );
-            conn.setInstanceFollowRedirects( false );
-            conn.setRequestMethod( "POST" );
-            conn.setRequestProperty( "Content-Type", "application/x-www-form-urlencoded");
-            conn.setRequestProperty( "charset", "utf-8");
-            conn.setRequestProperty( "Content-Length", Integer.toString( postDataLength ));
-            conn.setUseCaches( false );
-            try( DataOutputStream wr = new DataOutputStream( conn.getOutputStream())) {
-                wr.write( postData );
-                wr.close();
-            }
-            BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-            result = br.readLine();
-            br.close();
-        } catch (ProtocolException e) {
-            e.printStackTrace();
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return result;
-    }
+//    private String postHttpRequest(String request, String email){
+//        String result ="";
+//        try {
+//            String urlParameters  = "email="+email;
+//            byte[] postData       = urlParameters.getBytes( StandardCharsets.UTF_8 );
+//            int    postDataLength = postData.length;
+//            URL url            = new URL( request );
+//            HttpURLConnection conn= (HttpURLConnection) url.openConnection();
+//            conn.setDoOutput( true );
+//            conn.setInstanceFollowRedirects( false );
+//            conn.setRequestMethod( "POST" );
+//            conn.setRequestProperty( "Content-Type", "application/x-www-form-urlencoded");
+//            conn.setRequestProperty( "charset", "utf-8");
+//            conn.setRequestProperty( "Content-Length", Integer.toString( postDataLength ));
+//            conn.setUseCaches( false );
+//            try( DataOutputStream wr = new DataOutputStream( conn.getOutputStream())) {
+//                wr.write( postData );
+//                wr.close();
+//            }
+//            BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+//            result = br.readLine();
+//            br.close();
+//        } catch (ProtocolException e) {
+//            e.printStackTrace();
+//        } catch (MalformedURLException e) {
+//            e.printStackTrace();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//        return result;
+//    }
 
-    private class MyRunnable implements Runnable {
-        Contact c;
-        SBoolean trust, referral;
-
-        public MyRunnable(Contact c, SBoolean trust, SBoolean referral){ this.c = c; this.trust=trust; this.referral=referral;}
-        @Override
-        public void run() {
-            //List<Contact> l = Contact.getAllContacts();
-            //DEFINE NODE.JS SERVER FOR FIREBASE USER MANAGEMENT
-            String uid = postHttpRequest("https://x.appspot.com/email2uid", c.getEmail());
-            c.setUID(uid);
-            Contact.createContact(c);
-            //Random r = new Random();
-            //r.nextInt(l.size());
-            //r.nextInt(l.size());
-            if(referral!=null) {
-                TrustOpinion refopinion = new TrustOpinion(Avatar.getAvatar().getUID(), uid, "TripShareApp", referral, "id", true);
-                TrustOpinion.createOpinion(refopinion);
-            }
-            if(trust!=null) {
-                TrustOpinion opinion = new TrustOpinion(Avatar.getAvatar().getUID(), uid, "TripShareApp", trust, "id", false);
-                TrustOpinion.createOpinion(opinion);
-                // Creamos una opinion al azar
-                /*if(!l.isEmpty()) {
-                    opinion.setTruster(l.get(r.nextInt(l.size())).getUID());
-                    TrustOpinion.createOpinion(opinion);
-                }*/
-            } /*else {
-                //si no marco una functional trust, entonces solo creo un aleatoria incierta
-                if(!l.isEmpty()) {
-                    trust = SBoolean.UNCERTAIN;
-                    TrustOpinion opinion = new TrustOpinion(l.get(r.nextInt(l.size())).getUID(), uid, "TripShareApp", trust, "id", false);
-                    TrustOpinion.createOpinion(opinion);
-                }
-            }*/
-            //Log.i("Digital Avatar", "Tengo un nuevo amigo:"+c.getEmail() + " con confianza en el " + trust.projection() + " y referral " + referral.projection());
-        }
-    }
+//    private class MyRunnable implements Runnable {
+//        Contact c;
+//        SBoolean trust, referral;
+//
+//        public MyRunnable(Contact c, SBoolean trust, SBoolean referral){ this.c = c; this.trust=trust; this.referral=referral;}
+//        @Override
+//        public void run() {
+//            //List<Contact> l = Contact.getAllContacts();
+//            //DEFINE NODE.JS SERVER FOR FIREBASE USER MANAGEMENT
+//            String uid = postHttpRequest("https://x.appspot.com/email2uid", c.getEmail());
+//            c.setUID(uid);
+//            Contact.createContact(c);
+//            //Random r = new Random();
+//            //r.nextInt(l.size());
+//            //r.nextInt(l.size());
+//            if(referral!=null) {
+//                TrustOpinion refopinion = new TrustOpinion(Avatar.getAvatar().getUID(), uid, "TripShareApp", referral, "id", true);
+//                TrustOpinion.createOpinion(refopinion);
+//            }
+//            if(trust!=null) {
+//                TrustOpinion opinion = new TrustOpinion(Avatar.getAvatar().getUID(), uid, "TripShareApp", trust, "id", false);
+//                TrustOpinion.createOpinion(opinion);
+//                // Creamos una opinion al azar
+//                /*if(!l.isEmpty()) {
+//                    opinion.setTruster(l.get(r.nextInt(l.size())).getUID());
+//                    TrustOpinion.createOpinion(opinion);
+//                }*/
+//            } /*else {
+//                //si no marco una functional trust, entonces solo creo un aleatoria incierta
+//                if(!l.isEmpty()) {
+//                    trust = SBoolean.UNCERTAIN;
+//                    TrustOpinion opinion = new TrustOpinion(l.get(r.nextInt(l.size())).getUID(), uid, "TripShareApp", trust, "id", false);
+//                    TrustOpinion.createOpinion(opinion);
+//                }
+//            }*/
+//            //Log.i("Digital Avatar", "Tengo un nuevo amigo:"+c.getEmail() + " con confianza en el " + trust.projection() + " y referral " + referral.projection());
+//        }
+//    }
 }

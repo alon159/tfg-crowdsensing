@@ -174,8 +174,8 @@ public class HomeFragment extends Fragment {
 
                 "@source(type='android-message', appid ='pollResponseReceiver'," +
                 "@map(type='keyvalue',fail.on.missing.attribute='false'," +
-                "@attributes(pollId='pollId', count='count', result='message')))" +
-                "define stream pollResponseReceiver(pollId String, count String, result String);" +
+                "@attributes(pollId='pollId', result='message', type='type', tokenID='tokenID')))" +
+                "define stream pollResponseReceiver(pollId String, result String, type String, tokenID String);" +
 
                 "@source(type='android-broadcast', identifier='broadcastPoll'," +
                 "@map(type='keyvalue',fail.on.missing.attribute='false'," +
@@ -184,8 +184,8 @@ public class HomeFragment extends Fragment {
 
                 "@source(type='android-broadcast', identifier='pollResponse'," +
                 "@map(type='keyvalue',fail.on.missing.attribute='false'," +
-                "@attributes(pollId='pollId', count='count', recipient='recipient', message='result')))" +
-                "define stream pollResponse(pollId String, count String, recipient String, message String);" +
+                "@attributes(pollId='pollId', recipient='recipient', message='result', type='type')))" +
+                "define stream pollResponse(pollId String, recipient String, message String, type String);" +
 
 
                 "@sink(type='da-crowdpoll'," +
@@ -194,7 +194,7 @@ public class HomeFragment extends Fragment {
 
                 "@sink(type='android-broadcast', identifier='receivePollResponse', " +
                 "@map(type='keyvalue'))" +
-                "define stream pollResponseReceived(pollId String, count String, result String); " +
+                "define stream pollResponseReceived(pollId String, result String, type String, tokenID String); " +
 
                 "@sink(type='android-message' , appid='pollReceiver', recipients='Relations'," +
                 "@map(type='keyvalue'))"+
@@ -202,7 +202,7 @@ public class HomeFragment extends Fragment {
 
                 "@sink(type='android-message' , appid='pollResponseReceiver', recipients='Relations'," +
                 "@map(type='keyvalue'))"+
-                "define stream sendPollResponse(pollId String, count String, recipient String, message String); " +
+                "define stream sendPollResponse(pollId String, recipient String, message String, type String); " +
 
                 "from pollResponse select * insert into sendPollResponse;"+
                 "from pollReceiver select * insert into runPoll;"+
@@ -214,7 +214,8 @@ public class HomeFragment extends Fragment {
         pollsReceiver = new PollsReceiver();
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction("receivePollResponse");
-        SiddhiAppService.getServiceInstance().registerReceiver(pollsReceiver, intentFilter, Context.RECEIVER_NOT_EXPORTED);
+        SiddhiAppService.getServiceInstance().registerReceiver(pollsReceiver, intentFilter, Context.RECEIVER_EXPORTED);
+        //requireContext().registerReceiver(pollsReceiver, intentFilter, Context.RECEIVER_NOT_EXPORTED);
         /*
         beaconHandler = BeaconHandler.getInstance();
         beaconHandler.setParentReceiverActivity(getActivity());

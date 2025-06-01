@@ -37,27 +37,26 @@ public class OneSignalService {
     public static void postMessage(String title, String text, String data, String recipients){
         //Log.i("OneSignalExample", "Message is:" + text);
         List<Contact> contacts;
-        String rec="";
+        JSONArray rec = new JSONArray();
         try {
             if(recipients.equals("Relations")){
                 contacts = Contact.getAllContacts();
                 for(Contact c : contacts){
-                    rec+= "'" + c.getOneSignalID() + "',";
+                    rec.put(c.getOneSignalID());
                 }
                 //Implementar else if el nombre de algún grupo de privacidad
             } else {
-                rec+= "'" + recipients + "',";
+                rec.put(recipients);
             }
 
             //DigitalAvatar da = DigitalAvatar.getDA();
             //Document doc = da.getDoc(recipients);
             //Iterator<String> it = doc.iterator();
             if(rec.length() > 0) {
-                rec.substring(0, rec.length() - 1);
                 JSONObject notificationContent = new JSONObject();
                 notificationContent.put("app_id", ONESIGNAL_APP_ID);
                 notificationContent.put("contents", new JSONObject().put("en", text));
-                notificationContent.put("include_aliases", new JSONObject().put("onesignal_id", new JSONArray(rec)));
+                notificationContent.put("include_aliases", new JSONObject().put("onesignal_id", rec));
                 notificationContent.put("target_channel", "push");
                 notificationContent.put("headings", new JSONObject().put("en", title));
                 notificationContent.put("data", new JSONObject(data));

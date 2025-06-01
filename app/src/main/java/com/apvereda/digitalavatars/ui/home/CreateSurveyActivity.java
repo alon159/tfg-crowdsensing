@@ -24,6 +24,7 @@ import com.google.android.material.button.MaterialButtonToggleGroup;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.textfield.TextInputEditText;
 
+import org.json.JSONObject;
 import org.wso2.siddhi.android.platform.SiddhiAppService;
 
 public class CreateSurveyActivity extends AppCompatActivity {
@@ -60,8 +61,8 @@ public class CreateSurveyActivity extends AppCompatActivity {
 
             }
         });
-        TextInputEditText textInput = findViewById(R.id.textInputEncuesta);
-        textInput.addTextChangedListener(new TextWatcher() {
+        TextInputEditText messageTextInput = findViewById(R.id.textInputEncuesta);
+        messageTextInput.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
             }
@@ -81,7 +82,6 @@ public class CreateSurveyActivity extends AppCompatActivity {
         });
         MaterialButton btnToggle = findViewById(R.id.btnToggleAdvanced);
         LinearLayout advancedOptions = findViewById(R.id.advancedOptionsLayout);
-
         btnToggle.setOnClickListener(v -> {
             if (advancedOptions.getVisibility() == View.GONE) {
                 advancedOptions.setVisibility(View.VISIBLE);
@@ -92,6 +92,42 @@ public class CreateSurveyActivity extends AppCompatActivity {
             }
         });
 
+        TextInputEditText timeoutTextInput = findViewById(R.id.inputTimeout);
+        timeout = Long.parseLong(timeoutTextInput.getText().toString());
+        timeoutTextInput.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (!s.toString().isEmpty())
+                    timeout = Long.parseLong(s.toString());
+            }
+        });
+        TextInputEditText scopeTextInput = findViewById(R.id.inputScope);
+        scopeMax = Integer.parseInt(scopeTextInput.getText().toString());
+        scopeTextInput.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (!s.toString().isEmpty())
+                    scopeMax = Integer.parseInt(s.toString());
+            }
+        });
         sendButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -104,15 +140,22 @@ public class CreateSurveyActivity extends AppCompatActivity {
                                 String scriptUrl = "https://raw.githubusercontent.com/alon159/tfg-crowdsensing/refs/heads/main/script.bsh";
                                 Intent intent = new Intent("broadcastPoll");
                                 String nextRole = (scopeMax - 1) == 0 ? "Slave" : "Master-" + (scopeMax - 1);
-                                intent.putExtra("message", "Message body");
-                                intent.putExtra("recipient", "Relations");
+                                JSONObject survey = new JSONObject();
+                                try {
+                                    survey.put("message", message);
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                                //intent.putExtra("message", "Message body");
+                                //intent.putExtra("recipient", "Relations");
                                 //ADDITIONAL DATA FOR NOTIFICATION
                                 intent.putExtra("type", surveyType);
                                 intent.putExtra("role", nextRole);
+                                intent.putExtra("pollId", ""+1);
                                 intent.putExtra("timeout", "" + timeout);
                                 //i.putExtra("pollId", (String) event.get("pollId"));
                                 intent.putExtra("script", scriptUrl);
-                                intent.putExtra("survey", "{'message':" + message + "}");
+                                intent.putExtra("survey", survey.toString());
                                 intent.putExtra("callback", Avatar.getAvatar().getOneSignalID());
                                 SiddhiAppService.getServiceInstance().sendBroadcast(intent);
                                 Log.i("DA-Crowdsensing", "Sending poll for " + nextRole + " with timeout " + timeout);

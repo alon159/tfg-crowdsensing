@@ -109,7 +109,7 @@ public class BroadcastIntentSink extends Sink {
     @Override
     public void publish(Object o, DynamicOptions dynamicOptions)
             throws ConnectionUnavailableException {
-        //Log.i("DA", "LLega evento: " + identifier);
+        Log.i("BroadcastIntentSink", "LLega evento a broadcast");
         Intent in = new Intent(identifier);
         if (o instanceof String) {
             in.putExtra("message", o.toString());
@@ -136,6 +136,7 @@ public class BroadcastIntentSink extends Sink {
         }
 
         context.sendBroadcast(in);
+
     }
 
     @Override

@@ -262,7 +262,12 @@ public class Contact {
     }
 
     public static void createContact(Contact c){
-        MutableDocument contactDoc = new MutableDocument(c.getUID());
+        MutableDocument contactDoc;
+        if(c.getUID() == null) {
+            contactDoc= new MutableDocument();
+        } else{
+            contactDoc = new MutableDocument(c.getUID());
+        }
         contactDoc.setString("type", "Contact");
         contactDoc.setString("Email", c.getEmail());
         contactDoc.setString("Name", c.getName());

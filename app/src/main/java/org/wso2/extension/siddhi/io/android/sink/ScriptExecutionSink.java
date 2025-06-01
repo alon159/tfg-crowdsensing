@@ -159,7 +159,7 @@ public class ScriptExecutionSink extends Sink {
                 break;
         }
         DigitalAvatarController dac = new DigitalAvatarController();
-        List crowdpolls = new ArrayList<AbstractEntity>();
+        List<AbstractEntity> crowdpolls;
         lock.lock();
         try {
             crowdpolls = dac.getAll("DA-Poll" + event.get("pollId"), type);
@@ -300,6 +300,7 @@ public class ScriptExecutionSink extends Sink {
                 final Interpreter i = new Interpreter();
                 i.set("dac", new DigitalAvatarController());
                 i.set("poll", poll);
+                i.set("type", type);
                 //i.set("myresult", ((Value)crowdpoll.get("myresult")).get()+"");
                 Log.i("DA-Crowdsensing", "Script acquired " + script);
                 printCSV(context, "Script acquired", new Date().toString());
@@ -312,6 +313,7 @@ public class ScriptExecutionSink extends Sink {
                 //callback = callback.replace("onesignalid: ", "");
                 Intent intent = new Intent("pollResponse");
                 intent.putExtra("recipient", callback);
+                intent.putExtra("type", type.getText());
                 intent.putExtra("pollId", poll);
                 intent.putExtra("result", result);
                 SiddhiAppService.getServiceInstance().sendBroadcast(intent);

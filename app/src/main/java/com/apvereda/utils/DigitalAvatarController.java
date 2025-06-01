@@ -72,12 +72,10 @@ public class DigitalAvatarController {
                         Value v = new Value(//d.getString("uid"),
                                 d.getString("name"), d.getString("type"), d.getArray("privacy").toList().toArray(new String[]{}),
                                 d.getDate("timestamp"), null);
-                        if (v.getType().equals("String") || v.getType().equals("entity")) {
-                            v.set(d.getString("value"));
-                        } else if (v.getType().equals("int")) {
-                            v.set(d.getInt("value"));
-                        } else if (v.getType().equals("double")) {
-                            v.set(d.getDouble("value"));
+                        switch (v.getType()) {
+                            case "String" -> v.set(d.getString("value"));
+                            case "int" -> v.set(d.getInt("value"));
+                            case "double" -> v.set(d.getDouble("value"));
                         }
                         valuesMap.put(d.getString("name"), v);
                     }
@@ -114,12 +112,10 @@ public class DigitalAvatarController {
                         Value v = new Value(//d.getString("uid"),
                                 d.getString("name"), d.getString("type"), d.getArray("privacy").toList().toArray(new String[]{}),
                                 d.getDate("timestamp"), null);
-                        if (v.getType().equals("String") || v.getType().equals("entity")) {
-                            v.set(d.getString("value"));
-                        } else if (v.getType().equals("int")) {
-                            v.set(d.getInt("value"));
-                        } else if (v.getType().equals("double")) {
-                            v.set(d.getDouble("value"));
+                        switch (v.getType()) {
+                            case "String" -> v.set(d.getString("value"));
+                            case "int" -> v.set(d.getInt("value"));
+                            case "double" -> v.set(d.getDouble("value"));
                         }
                         valuesMap.put(d.getString("name"), v);
                     }
@@ -156,7 +152,7 @@ public class DigitalAvatarController {
                         Value v = new Value(//d.getString("uid"),
                                 d.getString("name"), d.getString("type"), d.getArray("privacy").toList().toArray(new String[]{}),
                                 d.getDate("timestamp"), null);
-                        if (v.getType().equals("String") || v.getType().equals("entity")) {
+                        if (v.getType().equals("String")) {
                             v.set(d.getString("value"));
                         } else if (v.getType().equals("int")) {
                             v.set(d.getInt("value"));

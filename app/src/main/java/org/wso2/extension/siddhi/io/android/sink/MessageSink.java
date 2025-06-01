@@ -116,7 +116,7 @@ public class MessageSink extends Sink {
     @Override
     public void publish(Object o, DynamicOptions dynamicOptions)
             throws ConnectionUnavailableException {
-        //Log.i("Siddhi-Message", "Vamos a mandar mensaje");
+        Log.i("Siddhi-Message", "Vamos a mandar mensaje");
         DigitalAvatar da = DigitalAvatar.getDA();
         MutableDocument doc = da.getDoc(da.getAvatars(), "Avatar");
         String title = doc.getString("Email");

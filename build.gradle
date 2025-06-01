@@ -10,7 +10,7 @@ buildscript {
 
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:8.10.0'
+        classpath 'com.android.tools.build:gradle:8.10.1'
         classpath 'me.champeau.gradle:antlr4-gradle-plugin:0.1'
         classpath 'gradle.plugin.com.onesignal:onesignal-gradle-plugin:[0.12.4, 0.99.99]'
         classpath 'com.google.gms:google-services:4.4.2'
