@@ -9,7 +9,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-Map<String, Object> resultMap = new HashMap<String, Object>();
+JSONObject resultsjson = new JSONObject();
 String result;
 
 Entity crowdpoll = (Entity) dac.getAll("DA-Poll"+poll, type).get(0);
@@ -17,11 +17,11 @@ Value myresult = (Value) crowdpoll.get("myresult");
 try{
     if (myresult != null){
         JSONObject myresultjson = new JSONObject(myresult.get());
-        for (Iterator<String> it = question.keys(); it.hasNext(); ) {
+        for (Iterator<String> it = myresultjson.keys(); it.hasNext(); ) {
             String key = it.next();
-            Map<Integer, Integer> values = new HashMap<Integer, Integer>();
+            JSONObject values = new JSONObject();
             values.put(question.getInt(key), 1);
-            resultMap.put(key, values);
+            resultsjson.put(key, values);
         }
     }
 
@@ -32,7 +32,7 @@ try{
             JSONObject cresult = cresultsjson.getJSONObject(i);
             for (Iterator<String> it = cresult.keys(); it.hasNext(); ) {
                 String key = it.next();
-                Map<Integer, Integer> values = resultMap.get(key);
+                Map<Integer, Integer> values = myresultjson.get(key);
                 if (values != null) {
                     if (values.containsKey(cresult.getInt(key))) {
                         values.put(cresult.getInt(key), values.get(cresult.getInt(key)) + 1);
@@ -40,15 +40,16 @@ try{
                         values.put(cresult.getInt(key), 1);
                     }
                 }
-                resultMap.put(key, values);
+                resultsjson.put(key, values);
             }
         }
     }
 
-    if (!resultMap.isEmpty()){
+    if (!resultsjson.isEmpty()){
     StringBuilder resultSB = new StringBuilder("{");
-    for (String key : resultMap.keySet()) {
-        Map<Integer, Integer> values = resultMap.get(key);
+    for (Iterator<String> it = resultsjson.keys(); it.hasNext(); ) {
+        String key = it.next();
+        Map<Integer, Integer> values = resultsjson.get(key);
         resultSB.append("'").append(key).append("' : {");
         for (Integer value : values.keySet()) {
             resultSB.append("'").append(value).append("' : '").append(values.get(value)).append("' , ");
