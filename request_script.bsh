@@ -17,10 +17,10 @@ Value myresult = (Value) crowdpoll.get("myresult");
 try{
     if (myresult != null){
         JSONObject myresultjson = new JSONObject(myresult.get());
-        for (Iterator<String> it = myresultjson.keys(); it.hasNext(); ) {
-            String key = it.next();
+        for (int i=0; i<myresultjson.length(); i++) {
+            String key = "q"+i;
             JSONObject values = new JSONObject();
-            values.put(question.getInt(key), 1);
+            values.put(myresultjson.getInt(key), 1);
             resultsjson.put(key, values);
         }
     }
@@ -30,8 +30,8 @@ try{
         JSONArray cresultsjson = new JSONArray(contactsResults.get());
         for(int i=0; i<cresultsjson.length(); i++){
             JSONObject cresult = cresultsjson.getJSONObject(i);
-            for (Iterator<String> it = cresult.keys(); it.hasNext(); ) {
-                String key = it.next();
+            for (int j=0; j<myresultjson.length(); j++) {
+                String key = "q"+j;
                 Map<Integer, Integer> values = myresultjson.get(key);
                 if (values != null) {
                     if (values.containsKey(cresult.getInt(key))) {
@@ -47,8 +47,8 @@ try{
 
     if (!resultsjson.isEmpty()){
     StringBuilder resultSB = new StringBuilder("{");
-    for (Iterator<String> it = resultsjson.keys(); it.hasNext(); ) {
-        String key = it.next();
+    for (int i=0; i<resultsjson.length(); i++) {
+        String key = "q"+i;
         Map<Integer, Integer> values = resultsjson.get(key);
         resultSB.append("'").append(key).append("' : {");
         for (Integer value : values.keySet()) {
