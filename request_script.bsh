@@ -20,7 +20,7 @@ try{
         for (int i=0; i<myresultjson.length(); i++) {
             String key = "q"+i;
             JSONObject values = new JSONObject();
-            values.put(myresultjson.getInt(key), 1);
+            values.put(myresultjson.getString(key), 1);
             resultsjson.put(key, values);
         }
     }
@@ -30,14 +30,14 @@ try{
         JSONArray cresultsjson = new JSONArray(contactsResults.get());
         for(int i=0; i<cresultsjson.length(); i++){
             JSONObject cresult = cresultsjson.getJSONObject(i);
-            for (int j=0; j<myresultjson.length(); j++) {
+            for (int j=0; j<cresult.length(); j++) {
                 String key = "q"+j;
-                Map<Integer, Integer> values = myresultjson.get(key);
+                JSONObject values = myresultjson.get(key);
                 if (values != null) {
-                    if (values.containsKey(cresult.getInt(key))) {
-                        values.put(cresult.getInt(key), values.get(cresult.getInt(key)) + 1);
+                    if (values.has(cresult.getString(key))) {
+                        values.put(cresult.getString(key), values.get(cresult.getInt(key)) + 1);
                     } else {
-                        values.put(cresult.getInt(key), 1);
+                        values.put(cresult.getString(key), 1);
                     }
                 }
                 resultsjson.put(key, values);
