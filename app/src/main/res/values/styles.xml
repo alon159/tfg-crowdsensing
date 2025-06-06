@@ -105,5 +105,9 @@
         <item name="cornerSize">16dp</item>
     </style>
 
-
+    <style name="FirebaseUITheme" parent="FirebaseUI">
+        <!-- Solo lo básico para no interferir -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorSecondary">@color/colorAccent</item>
+    </style>
 </resources>

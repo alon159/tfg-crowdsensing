@@ -132,14 +132,14 @@ public class MessageSink extends Sink {
         StringBuilder sb = new StringBuilder("{");
         for (String key : event.keySet()) {
             Object value = event.get(key);
-            sb.append("'"+key+"' : '"+value+"' , ");
+            sb.append("'").append(key).append("' : \"").append(value).append("\" , ");
         }
         sb.append("'tokenID' : '"+tokenID+"' , ");
         sb.append("'appid' : '"+identifier+"'");
         //sb.delete(sb.length()-3, sb.length()-1);
         sb.append("}");
         data = sb.toString();
-        //Log.i("Siddhi-Message", "Se van a enviar los siguientes datos por mensaje: "+data);
+        Log.i("Siddhi-Message", "Se van a enviar los siguientes datos por mensaje: "+data);
         OneSignalService.postMessage(title,text,data,recipients);
     }
 

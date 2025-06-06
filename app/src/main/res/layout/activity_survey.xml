@@ -5,80 +5,40 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".ui.pollsList.SurveyActivity"
-    android:padding="50dp">
+    android:padding="40dp">
 
     <TextView
         android:id="@+id/pollid"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="30dp"
         android:text="Poll ID: 1234"
         android:textSize="30sp"
         android:textStyle="bold"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/message"
+        app:layout_constraintBottom_toTopOf="@id/surveyView"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- Message -->
-    <TextView
-        android:id="@+id/message"
+    <ScrollView
+        android:id="@+id/surveyView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="¿Estás de acuerdo con la propuesta?"
-        android:textSize="20sp"
-        android:layout_marginTop="30dp"
         app:layout_constraintTop_toBottomOf="@id/pollid"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
-
-    <!-- Toggle group: aceptar / rechazar -->
-    <com.google.android.material.button.MaterialButtonToggleGroup
-        android:id="@+id/decisionGroup"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
-        app:singleSelection="true"
-        app:selectionRequired="true"
-        app:layout_constraintTop_toBottomOf="@id/message"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/acceptButton"
-            android:layout_width="0dp"
+        <LinearLayout
+            android:id="@+id/surveyLayout"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/accept_offer"
-            style="@style/Widget.Material3.Button.OutlinedButton" />
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/declineButton"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/decline_offer"
-            style="@style/Widget.Material3.Button.OutlinedButton" />
-    </com.google.android.material.button.MaterialButtonToggleGroup>
-
-    <!-- Botón Enviar -->
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/sendPollResultButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Enviar"
-        android:enabled="false"
-        android:layout_marginTop="32dp"
-        app:layout_constraintTop_toBottomOf="@id/decisionGroup"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+            android:orientation="vertical"/>
+    </ScrollView>
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/subscriptionButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Suscribete"
-        android:visibility="invisible"
+        android:visibility="gone"
         android:textColor="@android:color/holo_red_dark"
         style="@style/Widget.Material3.Button.OutlinedButton"
         app:icon="@drawable/add_friend"

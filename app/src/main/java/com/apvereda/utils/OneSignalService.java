@@ -82,12 +82,11 @@ public class OneSignalService {
 
                 RequestBody body = RequestBody.create(
                         jsonBody.toString(),
-                        MediaType.parse("application/json; charset=utf-8")
+                        MediaType.parse("application/json")
                 );
 
                 Request request = new Request.Builder()
                         .url(ONESIGNAL_API_URL)
-                        .addHeader("accept", "application/json")
                         .addHeader("Authorization", "Key " + ONESIGNAL_API_KEY)
                         .post(body)
                         .build();

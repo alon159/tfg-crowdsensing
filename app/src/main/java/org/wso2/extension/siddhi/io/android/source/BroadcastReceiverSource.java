@@ -143,7 +143,7 @@ public class BroadcastReceiverSource extends Source {
                     results.put(key, value);
                 }
             }
-            Log.i("SiddhiSource", "Se ha recibido el evento con las claves"+ results);
+            Log.i("BroadcastReceiver", "Se ha recibido el evento con las claves"+ results);
             sourceEventListener.onEvent(results, null);
         }
     }

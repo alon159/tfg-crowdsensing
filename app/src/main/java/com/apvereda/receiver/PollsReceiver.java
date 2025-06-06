@@ -63,21 +63,22 @@ public class PollsReceiver extends BroadcastReceiver {
                     String pollTokenID = intent.getStringExtra("tokenID");
                     Log.d("PollsReceiver", "pollTokenID: "+pollTokenID);
                     if (pollTokenID != null && pollTokenID.equals(Avatar.getAvatar().getIdToken())){
-                        updateresults(poll, pollId, result);
+                        updateresults(poll, pollId, type, result);
                     }
                 }
             }
         }
 
-    private void updateresults(Entity poll, String pollId, String result) {
+    private void updateresults(Entity poll, String pollId, EntityType type, String result) {
         Log.i("PollsReceiver", "Uploading poll results");
         try {
             //JSONObject polljson = new JSONObject(result);
             Gson gson = new Gson();
-            Map<String, Object> polljson = gson.fromJson(result, Map.class);
+            Map<String, Object> jsonresult = gson.fromJson(result, Map.class);
             Map<String, Object> pollResult = new HashMap<>();
             pollResult.put("pollId", pollId);
-            pollResult.put("result", polljson);
+            pollResult.put("type", type.getText());
+            pollResult.put("result", jsonresult);
             FirebaseFirestore db = FirebaseFirestore.getInstance();
             db.collection("pollResults")
                     .add(pollResult)

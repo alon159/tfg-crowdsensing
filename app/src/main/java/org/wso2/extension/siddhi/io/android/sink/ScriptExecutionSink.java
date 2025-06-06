@@ -289,12 +289,6 @@ public class ScriptExecutionSink extends Sink {
                 //if answered????
                 DigitalAvatarController dac = new DigitalAvatarController();
                 Entity crowdpoll = (Entity) dac.getAll("DA-Poll" + poll, type).get(0);
-                Log.i("DA-Crowdsensing", "Poll acquired: " + crowdpoll.getUid());
-                if (!crowdpoll.getValues().containsKey("myresult")) {
-                    String result = "{ result: no_answer}";
-                    String[] privacy = {"public,public"};
-                    crowdpoll.set("myresult", new Value("myresult", "String", privacy, new Date(), result));
-                }
                 //scriptUrl = "https://raw.githubusercontent.com/alon159/tfg-crowdsensing/refs/heads/main/script.bsh"
                 String script = getScript();
                 final Interpreter i = new Interpreter();
@@ -311,16 +305,18 @@ public class ScriptExecutionSink extends Sink {
                 // SI SOY ESCLAVO MANDO RESPONSE AL MASTER
                 //if (callback.contains("onesignalid: ")) {
                 //callback = callback.replace("onesignalid: ", "");
-                Intent intent = new Intent("pollResponse");
-                intent.putExtra("recipient", callback);
-                intent.putExtra("type", type.getText());
-                intent.putExtra("pollId", poll);
-                intent.putExtra("result", result);
-                SiddhiAppService.getServiceInstance().sendBroadcast(intent);
-                Log.i("DA-Crowdsensing", "Slave sending result to sender " + callback);
-                printCSV(context, "Slave sending result to " + callback + ": " + result, new Date().toString());
-                Toast toast = Toast.makeText(context, "Sending results: " + result, Toast.LENGTH_LONG);
-                toast.show();
+                if (result != null) {
+                    Intent intent = new Intent("pollResponse");
+                    intent.putExtra("recipient", callback);
+                    intent.putExtra("type", type.getText());
+                    intent.putExtra("pollId", poll);
+                    intent.putExtra("result", result);
+                    SiddhiAppService.getServiceInstance().sendBroadcast(intent);
+                    Log.i("DA-Crowdsensing", "Slave sending result "+result+" to sender " + callback);
+                    printCSV(context, "Slave sending result to " + callback + ": " + result, new Date().toString());
+                    Toast toast = Toast.makeText(context, "Sending results: " + result, Toast.LENGTH_LONG);
+                    toast.show();
+                }
 
 //                    } else { // SI SOY EL MASTER, ENTONCES MANDO RESPUESTA DIRECTO AL SERVIDOR
 //                        //CAMBIAR ESTO PARA QUE SE GUARDEN EN LA ENTITY CORRESPONDIENTE

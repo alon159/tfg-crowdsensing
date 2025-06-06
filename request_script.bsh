@@ -52,7 +52,7 @@ try {
             JSONArray valueKeys = values.names();
             resultSB.append("'").append(key).append("' : {");
             for (int j = 0; j < values.length(); j++) {
-                resultSB.append("'").append(valueKeys.getString(j)).append("' : '").append(values.get(valueKeys.getString(j))).append("' , ");
+                resultSB.append("'").append(valueKeys.getString(j)).append("' : ").append(values.get(valueKeys.getString(j))).append(" , ");
             }
             resultSB.delete(resultSB.length() - 3, resultSB.length() - 1);
             resultSB.append("} , ");

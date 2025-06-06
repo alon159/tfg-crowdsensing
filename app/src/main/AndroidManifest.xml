@@ -55,6 +55,7 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".DrawerActivity"
+            android:windowSoftInputMode="adjustResize"
             android:exported="true"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
