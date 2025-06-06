@@ -14,8 +14,9 @@ Value myresult = (Value) crowdpoll.get("myresult");
 try{
     if (myresult != null){
         JSONObject myresultjson = new JSONObject(myresult.get());
+        JSONArray myresultjsonkeys = myresultjson.names();
         for (int i=0; i<myresultjson.length(); i++) {
-            String key = "q"+i;
+            String key = myresultjsonkeys.getString(i);
             JSONObject values = new JSONObject();
             values.put(myresultjson.getString(key), 1);
             resultsjson.put(key, values);
@@ -27,8 +28,9 @@ try{
         JSONArray cresultsjson = new JSONArray(contactsResults.get());
         for(int i=0; i<cresultsjson.length(); i++){
             JSONObject cresult = cresultsjson.getJSONObject(i);
+            JSONArray cresultkeys = cresult.names();
             for (int j=0; j<cresult.length(); j++) {
-                String key = "q"+j;
+                String key = cresultkeys.getString(j);
                 JSONObject values = myresultjson.getJSONObject(key);
                 if (values != null) {
                     if (values.has(cresult.getString(key))) {
@@ -42,10 +44,11 @@ try{
         }
     }
 
-    if (!resultsjson.isEmpty()){
+    if (resultsjson.length() > 0){
     StringBuilder resultSB = new StringBuilder("{");
+    JSONArray resultskeys = resultsjson.names();
     for (int i=0; i<resultsjson.length(); i++) {
-        String key = "q"+i;
+        String key = resultskeys.getString(i);
         JSONObject values = resultsjson.getJSONObject(key);
         resultSB.append("'").append(key).append("' : {");
         for (Integer value : values.keySet()) {
