@@ -1,5 +1,6 @@
 import org.json.JSONObject;
 import org.json.JSONArray;
+import org.json.JSONException;
 import com.apvereda.db.Entity;
 import com.apvereda.db.Value;
 import com.apvereda.db.Avatar;
@@ -9,13 +10,13 @@ import com.apvereda.uDataTypes.EntityType;
 JSONObject resultsjson = new JSONObject();
 String result;
 
-Entity crowdpoll = (Entity) dac.getAll("DA-Poll"+poll, type).get(0);
+Entity crowdpoll = (Entity) dac.getAll("DA-Poll" + poll, type).get(0);
 Value myresult = (Value) crowdpoll.get("myresult");
-try{
-    if (myresult != null){
-        JSONObject myresultjson = new JSONObject(myresult.get());
+try {
+    if (myresult != null) {
+        JSONObject myresultjson = new JSONObject((String) myresult.get());
         JSONArray myresultjsonkeys = myresultjson.names();
-        for (int i=0; i<myresultjson.length(); i++) {
+        for (int i = 0; i < myresultjson.length(); i++) {
             String key = myresultjsonkeys.getString(i);
             JSONObject values = new JSONObject();
             values.put(myresultjson.getString(key), 1);
@@ -24,44 +25,45 @@ try{
     }
 
     Value contactsResults = (Value) crowdpoll.get("results");
-    if (contactsResults != null){
+    if (contactsResults != null) {
         JSONArray cresultsjson = new JSONArray(contactsResults.get());
-        for(int i=0; i<cresultsjson.length(); i++){
+        for (int i = 0; i < cresultsjson.length(); i++) {
             JSONObject cresult = cresultsjson.getJSONObject(i);
             JSONArray cresultkeys = cresult.names();
-            for (int j=0; j<cresult.length(); j++) {
+            for (int j = 0; j < cresult.length(); j++) {
                 String key = cresultkeys.getString(j);
-                JSONObject values = myresultjson.getJSONObject(key);
-                if (values != null) {
-                    if (values.has(cresult.getString(key))) {
-                        values.put(cresult.getString(key), values.get(cresult.getInt(key)) + 1);
-                    } else {
-                        values.put(cresult.getString(key), 1);
-                    }
+                JSONObject values = cresult.getJSONObject(key);
+                if (values.has(cresult.getString(key))) {
+                    values.put(cresult.getString(key), Integer.parseInt((String) values.get(cresult.getString(key))) + 1);
+                } else {
+                    values.put(cresult.getString(key), 1);
                 }
                 resultsjson.put(key, values);
             }
         }
     }
 
-    if (resultsjson.length() > 0){
-    StringBuilder resultSB = new StringBuilder("{");
-    JSONArray resultskeys = resultsjson.names();
-    for (int i=0; i<resultsjson.length(); i++) {
-        String key = resultskeys.getString(i);
-        JSONObject values = resultsjson.getJSONObject(key);
-        resultSB.append("'").append(key).append("' : {");
-        for (Integer value : values.keySet()) {
-            resultSB.append("'").append(value).append("' : '").append(values.get(value)).append("' , ");
+    if (resultsjson.length() > 0) {
+        StringBuilder resultSB = new StringBuilder("{");
+        JSONArray resultskeys = resultsjson.names();
+        for (int i = 0; i < resultsjson.length(); i++) {
+            String key = resultskeys.getString(i);
+            JSONObject values = resultsjson.getJSONObject(key);
+            JSONArray valueKeys = values.names();
+            resultSB.append("'").append(key).append("' : {");
+            for (int j = 0; j < values.length(); j++) {
+                resultSB.append("'").append(valueKeys.getString(j)).append("' : '").append(values.get(valueKeys.getString(j))).append("' , ");
+            }
+            resultSB.delete(resultSB.length() - 3, resultSB.length() - 1);
+            resultSB.append("} , ");
         }
-        resultSB.delete(resultSB.length()-3, resultSB.length()-1);
-        resultSB.append("} , ");
-    }
-    resultSB.delete(resultSB.length()-3, resultSB.length()-1);
-    resultSB.append("}");
-    result = resultSB.toString();
+        resultSB.delete(resultSB.length() - 3, resultSB.length() - 1);
+        resultSB.append("}");
+        result = resultSB.toString();
     }
 
-} catch (JSONException e){
-    throw new RuntimeException(e);
+} catch (JSONException e) {
+            throw new RuntimeException(e);
+} catch (NullPointerException e) {
+       throw new RuntimeException(e);
 }
