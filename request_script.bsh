@@ -5,9 +5,6 @@ import com.apvereda.db.Value;
 import com.apvereda.db.Avatar;
 import com.apvereda.utils.DigitalAvatarController;
 import com.apvereda.uDataTypes.EntityType;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
 
 JSONObject resultsjson = new JSONObject();
 String result;
@@ -32,7 +29,7 @@ try{
             JSONObject cresult = cresultsjson.getJSONObject(i);
             for (int j=0; j<cresult.length(); j++) {
                 String key = "q"+j;
-                JSONObject values = myresultjson.get(key);
+                JSONObject values = myresultjson.getJSONObject(key);
                 if (values != null) {
                     if (values.has(cresult.getString(key))) {
                         values.put(cresult.getString(key), values.get(cresult.getInt(key)) + 1);
@@ -49,7 +46,7 @@ try{
     StringBuilder resultSB = new StringBuilder("{");
     for (int i=0; i<resultsjson.length(); i++) {
         String key = "q"+i;
-        Map<Integer, Integer> values = resultsjson.get(key);
+        JSONObject values = resultsjson.getJSONObject(key);
         resultSB.append("'").append(key).append("' : {");
         for (Integer value : values.keySet()) {
             resultSB.append("'").append(value).append("' : '").append(values.get(value)).append("' , ");
