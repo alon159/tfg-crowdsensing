@@ -9,7 +9,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-Map<String, Object> resultMap = new HashMap<>();
+Map<String, Object> resultMap = new HashMap<String, Object>();
 String result;
 
 Entity crowdpoll = (Entity) dac.getAll("DA-Poll"+poll, type).get(0);
@@ -19,7 +19,7 @@ try{
         JSONObject myresultjson = new JSONObject(myresult.get());
         for (Iterator<String> it = question.keys(); it.hasNext(); ) {
             String key = it.next();
-            Map<Integer, Integer> values = new HashMap<>();
+            Map<Integer, Integer> values = new HashMap<Integer, Integer>();
             values.put(question.getInt(key), 1);
             resultMap.put(key, values);
         }
