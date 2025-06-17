@@ -55,7 +55,6 @@ public class DigitalAvatar {
         }
         if (!exists) {
             MutableDocument avatar = new MutableDocument("Avatar");
-            avatar.setString("type", "Avatar");
             //MutableDocument relations = new MutableDocument("Relations");
             //relations.setString("privacy", "private");
             try {

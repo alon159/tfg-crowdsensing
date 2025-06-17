@@ -23,158 +23,335 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        app:singleSelection="true"
-        app:selectionRequired="true"
-        app:layout_constraintTop_toBottomOf="@id/tipoEncuestaLabel"
-        app:layout_constraintBottom_toTopOf="@id/contenidoLabel"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+        app:layout_constraintTop_toBottomOf="@id/tipoEncuestaLabel"
+        app:selectionRequired="true"
+        app:singleSelection="true">
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_offer"
+            style="@style/Widget.Material3.Button.OutlinedButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="OFFER"
-            style="@style/Widget.Material3.Button.OutlinedButton" />
+            android:text="OFFER" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_request"
+            style="@style/Widget.Material3.Button.OutlinedButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="REQUEST"
-            style="@style/Widget.Material3.Button.OutlinedButton" />
+            android:text="REQUEST" />
     </com.google.android.material.button.MaterialButtonToggleGroup>
 
-    <!-- Texto: Contenido de la Encuesta -->
     <TextView
-        android:id="@+id/contenidoLabel"
+        android:id="@+id/filtersLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:text="Contenido de la Encuesta"
+        android:text="Filtros"
         android:textSize="16sp"
+        android:layout_marginTop="10dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tipoEncuestaToggle" />
 
-    <!-- Área de texto -->
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/textInputLayout"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/contenidoLabel">
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/textInputEncuesta"
-            android:layout_width="match_parent"
-            android:layout_height="150dp"
-            android:gravity="top"
-            android:hint="Escribe aquí el contenido..."
-            android:inputType="textMultiLine" />
-    </com.google.android.material.textfield.TextInputLayout>
-
-
-    <!-- Botón para desplegar ajustes -->
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/btnToggleAdvanced"
+    <LinearLayout
+        android:id="@+id/filtersSelection"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Mostrar Ajustes avanzados"
-        android:background="@android:color/transparent"
-        android:textColor="@color/colorPrimary"
-        app:strokeColor="@color/fui_transparent"
-        app:icon="@drawable/baseline_arrow_forward_24"
-        app:iconGravity="textStart"
-        app:iconTint="@color/colorPrimary"
-        app:layout_constraintTop_toBottomOf="@+id/textInputLayout"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="16dp" />
-
-    <!-- Contenedor ajustes avanzados oculto por defecto -->
-    <LinearLayout
-        android:id="@+id/advancedOptionsLayout"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:visibility="gone"
-        android:padding="8dp"
-        android:background="#EEEEEE"
-        app:layout_constraintTop_toBottomOf="@+id/btnToggleAdvanced"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
-
-        <!-- Aquí puedes añadir opciones avanzadas -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginBottom="8dp"
-            android:gravity="center_vertical">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Timeout"
-                android:layout_marginEnd="16dp"
-                android:textSize="16sp"/>
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/inputTimeout"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/default_timeout"
-                    android:inputType="number"
-                    android:hint="segundos"/>
-            </com.google.android.material.textfield.TextInputLayout>
-        </LinearLayout>
-
-        <!-- Alcance -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_vertical">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Alcance"
-                android:layout_marginEnd="16dp"
-                android:textSize="16sp"/>
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/inputScope"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:inputType="number"
-                    android:text="@string/default_scope"
-                    android:hint="personas"/>
-            </com.google.android.material.textfield.TextInputLayout>
-        </LinearLayout>
+        android:orientation="horizontal"
+        app:layout_constraintTop_toBottomOf="@id/filtersLabel">
+        <com.google.android.material.checkbox.MaterialCheckBox
+            android:id="@+id/ubicationFilter"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="Ubicación"/>
+        <com.google.android.material.checkbox.MaterialCheckBox
+            android:id="@+id/ageFilter"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="Edad"/>
+        <com.google.android.material.checkbox.MaterialCheckBox
+            android:id="@+id/genreFilter"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="Género"/>
     </LinearLayout>
 
+    <LinearLayout
+        android:id="@+id/ubicationSetting"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@id/filtersSelection">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:layout_weight="2"
+            android:text="Rango"
+            android:textSize="16sp" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/rangoUbicacion"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="distancia (en km)"
+                android:inputType="number"/>
+        </com.google.android.material.textfield.TextInputLayout>
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/ageSetting"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@id/ubicationSetting">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"
+            android:layout_marginEnd="16dp"
+            android:text="Edad mínima"
+            android:textSize="16sp" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/edadMinima"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="edad (en años)"
+                android:inputType="number"/>
+        </com.google.android.material.textfield.TextInputLayout>
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/genreSetting"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@id/ageSetting">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"
+            android:layout_marginEnd="16dp"
+            android:text="Géneros"
+            android:textSize="16sp" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/generoSelection"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="géneros (usar comas)"
+                android:inputType="text"/>
+        </com.google.android.material.textfield.TextInputLayout>
+    </LinearLayout>
+
+    <!-- Texto: Contenido de la Encuesta -->
+    <ScrollView
+        android:id="@+id/newSurveysScrollView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/genreSetting">
+
+        <LinearLayout
+            android:id="@+id/newSurveysLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:id="@+id/survey0Layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:tag="0">
+
+                <TextView
+                    android:id="@+id/contenidoLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="24dp"
+                    android:text="Contenido de la Encuesta"
+                    android:textSize="16sp" />
+
+                <!-- Área de texto -->
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/textInputLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="120dp"
+                    android:hint="Escribe aquí el contenido">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/textInputEncuesta"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:gravity="top"
+                        android:inputType="textMultiLine" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <LinearLayout
+                    android:id="@+id/settingsLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="2"
+                        android:layout_marginEnd="16dp"
+                        android:text="Respuestas"
+                        android:textSize="16sp" />
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/inputNumAnswers"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="respuestas"
+                            android:inputType="text"
+                            android:text="@string/default_answers" />
+                    </com.google.android.material.textfield.TextInputLayout>
+                </LinearLayout>
+            </LinearLayout>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/addSurveyButton"
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:layout_marginTop="10dp"
+                app:icon="@android:drawable/ic_input_add"
+                app:iconGravity="textStart" />
+
+
+            <!-- Botón para desplegar ajustes -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnToggleAdvanced"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@android:color/transparent"
+                android:text="Mostrar Ajustes avanzados"
+                android:textColor="@color/colorPrimary"
+                app:icon="@drawable/baseline_arrow_forward_24"
+                app:iconGravity="textStart"
+                app:iconTint="@color/colorPrimary"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textInputLayout"
+                app:strokeColor="@color/fui_transparent" />
+
+            <!-- Contenedor ajustes avanzados oculto por defecto -->
+            <LinearLayout
+                android:id="@+id/advancedOptionsLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#EEEEEE"
+                android:orientation="vertical"
+                android:padding="8dp"
+                android:visibility="gone"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/btnToggleAdvanced">
+
+                <!-- Aquí puedes añadir opciones avanzadas -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="16dp"
+                        android:text="Timeout"
+                        android:textSize="16sp" />
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/inputTimeout"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="segundos"
+                            android:inputType="number"
+                            android:text="@string/default_timeout" />
+                    </com.google.android.material.textfield.TextInputLayout>
+                </LinearLayout>
+
+                <!-- Alcance -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="16dp"
+                        android:text="Alcance"
+                        android:textSize="16sp" />
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/inputScope"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="personas"
+                            android:inputType="number"
+                            android:text="@string/default_scope" />
+                    </com.google.android.material.textfield.TextInputLayout>
+                </LinearLayout>
+            </LinearLayout>
+
+
+        </LinearLayout>
+    </ScrollView>
     <!-- Botón Enviar -->
     <com.google.android.material.button.MaterialButton
         android:id="@+id/sendSurveyButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:text="Enviar"
+        android:layout_marginTop="10dp"
         android:enabled="false"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:text="Enviar"
+        app:layout_constraintTop_toBottomOf="@id/newSurveysScrollView"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/advancedOptionsLayout" />
+        app:layout_constraintEnd_toEndOf="parent"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

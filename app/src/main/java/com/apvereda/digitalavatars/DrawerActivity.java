@@ -19,6 +19,7 @@ import android.widget.Toast;
 
 import com.apvereda.db.Avatar;
 import com.apvereda.db.Contact;
+import com.apvereda.digitalavatars.ui.additionalData.AdditionalDataActivity;
 import com.apvereda.digitalavatars.ui.friendslist.MyFriendsFragment;
 import com.apvereda.digitalavatars.ui.addfriend.AddFriendFragment;
 import com.apvereda.digitalavatars.ui.home.HomeFragment;
@@ -76,8 +77,8 @@ public class DrawerActivity extends AppCompatActivity {
     AddFriendFragment friendFragment = new AddFriendFragment();
     MyFriendsFragment friendlistFragment = new MyFriendsFragment();
     DrawerLayout drawer;
-    Fragment[] fragments = new Fragment[]{homeFragment,profileFragment,friendFragment,friendlistFragment};
-    String[] fragmentTAGS = new String[]{"home","profile","addfriend","friendlist"};
+    Fragment[] fragments = new Fragment[]{homeFragment, profileFragment, friendFragment, friendlistFragment};
+    String[] fragmentTAGS = new String[]{"home", "profile", "addfriend", "friendlist"};
     Toolbar toolbar;
 
     @Override
@@ -167,7 +168,7 @@ public class DrawerActivity extends AppCompatActivity {
         firebaseLogin();
     }
 
-    private  boolean checkAndRequestPermissions() {
+    private boolean checkAndRequestPermissions() {
         int permissionReadStorage = ContextCompat.checkSelfPermission(this,
                 android.Manifest.permission.READ_EXTERNAL_STORAGE);
         int permissionWriteStorage = ContextCompat.checkSelfPermission(this,
@@ -182,7 +183,7 @@ public class DrawerActivity extends AppCompatActivity {
         if (permissionWriteStorage != PackageManager.PERMISSION_GRANTED)
             listPermissionsNeeded.add(android.Manifest.permission.WRITE_EXTERNAL_STORAGE);
         if (!listPermissionsNeeded.isEmpty()) {
-            ActivityCompat.requestPermissions(this, listPermissionsNeeded.toArray(new String[listPermissionsNeeded.size()]),REQUEST_ID_MULTIPLE_PERMISSIONS);
+            ActivityCompat.requestPermissions(this, listPermissionsNeeded.toArray(new String[listPermissionsNeeded.size()]), REQUEST_ID_MULTIPLE_PERMISSIONS);
             return false;
         }
         return true;
@@ -218,7 +219,7 @@ public class DrawerActivity extends AppCompatActivity {
                         //show the dialog or snackbar saying its necessary and try again otherwise proceed with setup.
                         if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.READ_EXTERNAL_STORAGE) ||
                                 ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_COARSE_LOCATION) ||
-                                ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.WRITE_EXTERNAL_STORAGE))  {
+                                ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
                             showDialogOK("SMS and Location Services Permission required for this app",
                                     new DialogInterface.OnClickListener() {
                                         @Override
@@ -261,6 +262,7 @@ public class DrawerActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
+        super.onBackPressed();
         getSupportFragmentManager().beginTransaction()
                 .show(fragments[0])
                 .hide(fragments[1])
@@ -282,10 +284,18 @@ public class DrawerActivity extends AppCompatActivity {
     );
 
     private void firebaseLogin() {
+        Log.i("Digital Avatar", "firebaseLogin");
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        if (user != null)
-            logUser();
-        else{
+        Avatar avatar = Avatar.getAvatar();
+        if (user != null) {
+            if (avatar.getAdditionalData().isEmpty()) {
+                Log.i("Digital Avatar", "No hay datos personales en el avatar");
+                Intent i = new Intent(getApplicationContext(), AdditionalDataActivity.class);
+                startActivity(i);
+            }
+//            logUser();
+            loadUserView(user);
+        } else {
             List<AuthUI.IdpConfig> providers = Arrays.asList(
                     new AuthUI.IdpConfig.EmailBuilder().build(),
                     new AuthUI.IdpConfig.PhoneBuilder().build(),
@@ -309,18 +319,18 @@ public class DrawerActivity extends AppCompatActivity {
             logUser();
         } else {
             Log.i("Digital Avatar", "Log in fallido");
-            if(response == null)
+            if (response == null)
                 Log.i("Digital Avatar", "User cancelled sing in flow pressing back button");
             else
                 Log.i("Digital Avatar", response.getError().getMessage());
 
-            }
         }
+    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
-        switch(item.getItemId()) {
+        switch (item.getItemId()) {
             case android.R.id.home:
                 drawer.openDrawer(GravityCompat.START);
                 //return true;
@@ -341,25 +351,25 @@ public class DrawerActivity extends AppCompatActivity {
 
     private void createFriend(JSONObject friend) throws JSONException {
         Contact c = new Contact(friend.getString("email"), friend.getString("name"),
-                "", "", friend.getString("onesignal"), "uid-"+friend.getString("email"));
+                "", "", friend.getString("onesignal"), "uid-" + friend.getString("email"));
         Contact.createContact(c);
     }
 
     private void readFriends() {
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(DrawerActivity.this);
         alertDialog.setTitle("Which user you are?");
-        String[] items = {"User 1","User 2","User 3","User 4","User 5","User 6","User 7","User 8","User 9","User 10"};
+        String[] items = {"User 1", "User 2", "User 3", "User 4", "User 5", "User 6", "User 7", "User 8", "User 9", "User 10"};
         int checkedItem = 1;
         alertDialog.setSingleChoiceItems(items, checkedItem, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 try {
-                    String json="";
+                    String json = "";
                     NetworkThread nt = new NetworkThread();
                     Thread t = new Thread(nt);
                     t.start();
                     t.join();
-                    json=nt.getJson();
+                    json = nt.getJson();
                     JSONArray friends = new JSONArray(json);
                     switch (which) {
                         case 0:
@@ -470,6 +480,8 @@ public class DrawerActivity extends AppCompatActivity {
         if (user.getPhotoUrl() != null)
             avatar.setPhoto(user.getPhotoUrl().toString());
         Log.i("Digital Avatar", "Datos personales almacenados en el avatar");
+        Intent i = new Intent(getApplicationContext(), AdditionalDataActivity.class);
+        startActivity(i);
         loadUserView(user);
     }
 
@@ -500,31 +512,31 @@ public class DrawerActivity extends AppCompatActivity {
     }
 }
 
-class NetworkThread implements Runnable{
-        String json;
+class NetworkThread implements Runnable {
+    String json;
 
-        public String getJson(){
-            return json;
-        }
+    public String getJson() {
+        return json;
+    }
 
-        @Override
-        public void run() {
-            try {
-                json=getFriendsJSON();
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        }
-
-        private String getFriendsJSON() throws IOException {
-            String json ="";
-            URL externalURL = new URL("https://xxx.000webhostapp.com/friends.json");
-            BufferedReader in = new BufferedReader(new InputStreamReader(externalURL.openStream()));
-            String inputLine;
-            while ((inputLine = in.readLine()) != null) {
-                json += inputLine + '\n';
-            }
-            in.close();
-            return json;
+    @Override
+    public void run() {
+        try {
+            json = getFriendsJSON();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
+
+    private String getFriendsJSON() throws IOException {
+        String json = "";
+        URL externalURL = new URL("https://xxx.000webhostapp.com/friends.json");
+        BufferedReader in = new BufferedReader(new InputStreamReader(externalURL.openStream()));
+        String inputLine;
+        while ((inputLine = in.readLine()) != null) {
+            json += inputLine + '\n';
+        }
+        in.close();
+        return json;
+    }
+}

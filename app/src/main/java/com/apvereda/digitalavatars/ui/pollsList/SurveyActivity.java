@@ -48,7 +48,7 @@ public class SurveyActivity extends AppCompatActivity {
         Bundle extras = getIntent().getExtras();
         String survey = extras.getString("survey");
         String pollId = extras.getString("pollId");
-        EntityType type = extras.getParcelable("type", EntityType.class);
+        EntityType type = (EntityType) extras.get("type");
         MaterialButton subscriptionButton = findViewById(R.id.subscriptionButton);
         if (type == EntityType.REQUEST)
             subscriptionButton.setVisibility(View.VISIBLE);

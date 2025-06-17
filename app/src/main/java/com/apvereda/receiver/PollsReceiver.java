@@ -37,37 +37,35 @@ public class PollsReceiver extends BroadcastReceiver {
     }
 
     @Override
-        public void onReceive(Context context, Intent intent) {
+    public void onReceive(Context context, Intent intent) {
+        if (intent.getAction().equals("receivePollResponse")) {
             Log.i("DA-Crowdsensing", "Poll response received");
-            if (intent.getAction().equals("receivePollResponse")) {
-                String pollId = intent.getStringExtra("pollId");
-                String result = intent.getStringExtra("result");
-                EntityType type = EntityType.fromText(intent.getStringExtra("type"));
-                DigitalAvatarController dac = new DigitalAvatarController();
-                List<AbstractEntity> polls = dac.getAll("DA-Poll"+pollId, type);
-                if(!polls.isEmpty()) {
-                    Entity poll = (Entity) polls.get(0);
-                    Value resultValue = (Value) poll.get("results");
-                    String pollResult = (String) (resultValue).get();
-                    if(!pollResult.equals("[]")) {
-                        pollResult = pollResult.replace("]", ", " + result + "]");
-                    } else {
-                        pollResult = pollResult.replace("]", result + "]");
-                    }
-                    resultValue.set(pollResult);
-                    poll.set("results", resultValue);
-                    Log.i("DA-Crowdsensing", "Poll response received: \"" + result + "\"");
-                    printCSV(context, "Poll response received", new Date().toString());
-                    Toast toast = Toast.makeText(context, "Poll response received: \"" + result + "\"", Toast.LENGTH_LONG);
-                    toast.show();
-                    String pollTokenID = intent.getStringExtra("tokenID");
-                    Log.d("PollsReceiver", "pollTokenID: "+pollTokenID);
-                    if (pollTokenID != null && pollTokenID.equals(Avatar.getAvatar().getIdToken())){
-                        updateresults(poll, pollId, type, result);
-                    }
+            String pollId = intent.getStringExtra("pollId");
+            String result = intent.getStringExtra("result");
+            EntityType type = EntityType.fromText(intent.getStringExtra("type"));
+            DigitalAvatarController dac = new DigitalAvatarController();
+            List<AbstractEntity> polls = dac.getAll("DA-Poll" + pollId, type);
+            if (!polls.isEmpty()) {
+                Entity poll = (Entity) polls.get(0);
+                Value resultValue = (Value) poll.get("results");
+                String pollResult = (String) resultValue.get();
+                if (!pollResult.equals("[]")) {
+                    pollResult = pollResult.replace("]", ", " + result + "]");
+                } else {
+                    pollResult = pollResult.replace("]", result + "]");
                 }
+                resultValue.set(pollResult);
+                poll.set("results", resultValue);
+                Log.i("DA-Crowdsensing", "Poll response received: \"" + result + "\"");
+                printCSV(context, "Poll response received", new Date().toString());
+                Toast toast = Toast.makeText(context, "Poll response received: \"" + result + "\"", Toast.LENGTH_LONG);
+                toast.show();
+                Value creatorValue = (Value) poll.get("creator");
+                if (creatorValue != null && (Boolean) creatorValue.get())
+                    updateresults(poll, pollId, type, result);
             }
         }
+    }
 
     private void updateresults(Entity poll, String pollId, EntityType type, String result) {
         Log.i("PollsReceiver", "Uploading poll results");
@@ -102,21 +100,21 @@ public class PollsReceiver extends BroadcastReceiver {
         }
     }
 
-    public void printCSV(Context context, String message, String time){
+    public void printCSV(Context context, String message, String time) {
         try {
             File fileDirectory = new File(context.getFilesDir(), "/Test");
-            if(!fileDirectory.exists()){
+            if (!fileDirectory.exists()) {
                 fileDirectory.mkdir();
             }
             File root = new File(context.getExternalFilesDir(Environment.getDataDirectory().getAbsolutePath()), "Test");
             if (!root.exists()) {
-                Log.i("Ficheros-DA", "La carpeta Test no existe "+root.getAbsolutePath());
+                Log.i("Ficheros-DA", "La carpeta Test no existe " + root.getAbsolutePath());
                 root.mkdirs();
             }
-            File file = new File(root,"/Test.csv");
-            FileWriter csvWriter =  new FileWriter(file, true);
+            File file = new File(root, "/Test.csv");
+            FileWriter csvWriter = new FileWriter(file, true);
 
-            csvWriter.append(Avatar.getAvatar().getOneSignalID()+" ; \""+message+"\" ; "+time+"\n");
+            csvWriter.append(Avatar.getAvatar().getOneSignalID() + " ; \"" + message + "\" ; " + time + "\n");
            /* csvWriter.append("ID;Sent;Delivered\n");
             for(Message m : messages){
                 csvWriter.append(m.getId()+";"+m.sent+";"+m.getDelivered()+"\n");

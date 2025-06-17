@@ -178,6 +178,10 @@ public class Entity extends AbstractEntity{
                     value.setString("type", "String");
                     value.setString("value", (String) v.get());
                 }
+                case "Boolean" -> {
+                    value.setString("type", "Boolean");
+                    value.setBoolean("value", (boolean) v.get());
+                }
             }
             //value.setString("uid", v.getUid());
             value.setString("name", key);

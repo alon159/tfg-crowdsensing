@@ -169,8 +169,8 @@ public class HomeFragment extends Fragment {
 
                 "@source(type='android-message', appid ='pollReceiver'," +
                 "@map(type='keyvalue',fail.on.missing.attribute='false'," +
-                "@attributes(role='role', pollId='pollId', script='script', callback='callback', timeout='timeout', survey='survey', type='type')))" +
-                "define stream pollReceiver(role String, pollId String, script String, callback String, timeout String, survey String, type String);" +
+                "@attributes(role='role', pollId='pollId', script='script', callback='callback', timeout='timeout', survey='survey', type='type', filter='filter')))" +
+                "define stream pollReceiver(role String, pollId String, script String, callback String, timeout String, survey String, type String, filter String);" +
 
                 "@source(type='android-message', appid ='pollResponseReceiver'," +
                 "@map(type='keyvalue',fail.on.missing.attribute='false'," +
@@ -179,8 +179,8 @@ public class HomeFragment extends Fragment {
 
                 "@source(type='android-broadcast', identifier='broadcastPoll'," +
                 "@map(type='keyvalue',fail.on.missing.attribute='false'," +
-                "@attributes(role='role', pollId='pollId', script='script', callback='callback', timeout='timeout', survey='survey', type='type')))" +
-                "define stream pollBroadcast(role String, pollId String, script String, callback String, timeout String, survey String, type String);" +
+                "@attributes(role='role', pollId='pollId', script='script', callback='callback', timeout='timeout', survey='survey', type='type', filter='filter')))" +
+                "define stream pollBroadcast(role String, pollId String, script String, callback String, timeout String, survey String, type String, filter String);" +
 
                 "@source(type='android-broadcast', identifier='pollResponse'," +
                 "@map(type='keyvalue',fail.on.missing.attribute='false'," +
@@ -190,7 +190,7 @@ public class HomeFragment extends Fragment {
 
                 "@sink(type='da-crowdpoll'," +
                 "@map(type='keyvalue'))"+
-                "define stream runPoll(role String, pollId String, script String, callback String, timeout String, survey String, type String); " +
+                "define stream runPoll(role String, pollId String, script String, callback String, timeout String, survey String, type String, filter String); " +
 
                 "@sink(type='android-broadcast', identifier='receivePollResponse', " +
                 "@map(type='keyvalue'))" +
@@ -198,7 +198,7 @@ public class HomeFragment extends Fragment {
 
                 "@sink(type='android-message' , appid='pollReceiver', recipients='Relations'," +
                 "@map(type='keyvalue'))"+
-                "define stream sendPollBroadcast(role String, pollId String, script String, callback String, timeout String, survey String, type String); " +
+                "define stream sendPollBroadcast(role String, pollId String, script String, callback String, timeout String, survey String, type String, filter String); " +
 
                 "@sink(type='android-message' , appid='pollResponseReceiver', recipients='Relations'," +
                 "@map(type='keyvalue'))"+
@@ -215,7 +215,6 @@ public class HomeFragment extends Fragment {
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction("receivePollResponse");
         SiddhiAppService.getServiceInstance().registerReceiver(pollsReceiver, intentFilter, Context.RECEIVER_EXPORTED);
-        //requireContext().registerReceiver(pollsReceiver, intentFilter, Context.RECEIVER_NOT_EXPORTED);
         /*
         beaconHandler = BeaconHandler.getInstance();
         beaconHandler.setParentReceiverActivity(getActivity());

@@ -28,6 +28,9 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
+            android:name=".ui.additionalData.AdditionalDataActivity"
+            android:exported="false" />
+        <activity
             android:name=".ui.home.CreateSurveyActivity"
             android:exported="false" />
 
@@ -55,9 +58,9 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".DrawerActivity"
-            android:windowSoftInputMode="adjustResize"
             android:exported="true"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="adjustResize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

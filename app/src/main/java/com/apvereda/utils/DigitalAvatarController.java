@@ -76,6 +76,7 @@ public class DigitalAvatarController {
                             case "String" -> v.set(d.getString("value"));
                             case "int" -> v.set(d.getInt("value"));
                             case "double" -> v.set(d.getDouble("value"));
+                            case "Boolean" -> v.set(d.getBoolean("value"));
                         }
                         valuesMap.put(d.getString("name"), v);
                     }
@@ -112,10 +113,12 @@ public class DigitalAvatarController {
                         Value v = new Value(//d.getString("uid"),
                                 d.getString("name"), d.getString("type"), d.getArray("privacy").toList().toArray(new String[]{}),
                                 d.getDate("timestamp"), null);
+                        Log.d("DAC", "Name: "+v.getName()+", Type :" + d.getString("type"));
                         switch (v.getType()) {
                             case "String" -> v.set(d.getString("value"));
                             case "int" -> v.set(d.getInt("value"));
                             case "double" -> v.set(d.getDouble("value"));
+                            case "Boolean" -> v.set(d.getBoolean("value"));
                         }
                         valuesMap.put(d.getString("name"), v);
                     }
@@ -152,12 +155,11 @@ public class DigitalAvatarController {
                         Value v = new Value(//d.getString("uid"),
                                 d.getString("name"), d.getString("type"), d.getArray("privacy").toList().toArray(new String[]{}),
                                 d.getDate("timestamp"), null);
-                        if (v.getType().equals("String")) {
-                            v.set(d.getString("value"));
-                        } else if (v.getType().equals("int")) {
-                            v.set(d.getInt("value"));
-                        } else if (v.getType().equals("double")) {
-                            v.set(d.getDouble("value"));
+                        switch (v.getType()) {
+                            case "String" -> v.set(d.getString("value"));
+                            case "int" -> v.set(d.getInt("value"));
+                            case "double" -> v.set(d.getDouble("value"));
+                            case "Boolean" -> v.set(d.getBoolean("value"));
                         }
                         valuesMap.put(d.getString("name"), v);
                     }

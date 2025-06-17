@@ -51,7 +51,8 @@ public class MySubscriptionsFragment extends AppCompatActivity {
                 drawer.openDrawer(GravityCompat.START);
             }
         });*/
-        type = getIntent().getExtras().getParcelable("type", EntityType.class);
+//        type = getIntent().getExtras().getParcelable("type", EntityType.class);
+        type = (EntityType) getIntent().getExtras().get("type");
         HomeViewModel vm = HomeViewModel.getInstance();
         switch (type){
             case OFFER:

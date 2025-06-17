@@ -13,7 +13,7 @@ import java.util.TreeMap;
 
 public class Avatar {
 
-    private static  Avatar avatar;
+    private static Avatar avatar;
     private String email;
     private String name;
     private String lastName;
@@ -22,7 +22,7 @@ public class Avatar {
     private String photo;
     private String idToken;
     private String UID;
-    private Map<String,Object> additionalData;
+    private Map<String, Object> additionalData;
 
 
     private Avatar(String uid, String id, String email, String name, String lastName, String phone, String oneSignalID, String photo, Map<String, Object> additionalData) {
@@ -58,24 +58,30 @@ public class Avatar {
         UID = uid;
     }
 
-    public static Avatar getAvatar(){
-        if(avatar == null){
+    public static Avatar getAvatar() {
+        if (avatar == null) {
             initialize();
         }
         return avatar;
     }
 
-    private static void initialize(){
+    private static void initialize() {
         DigitalAvatar da = DigitalAvatar.getDA();
         Document doc = da.getDoc(da.getAvatars(), "Avatar");
         avatar = new Avatar(doc.getString("UID"), doc.getString("IDToken"), doc.getString("Email"), doc.getString("Name"),
                 "", doc.getString("Phone"), doc.getString("IDOneSignal"),
                 doc.getString("Photo"));
         List<String> keys = doc.getKeys();
-        keys.remove("UID");keys.remove("IDToken"); keys.remove("Email"); keys.remove("LastName");
-        keys.remove("Name"); keys.remove("Phone"); keys.remove("IDOneSignal"); keys.remove("Photo");
-        Map<String,Object> additionalData = new TreeMap<>();
-        for(String key : keys){
+        keys.remove("UID");
+        keys.remove("IDToken");
+        keys.remove("Email");
+        keys.remove("LastName");
+        keys.remove("Name");
+        keys.remove("Phone");
+        keys.remove("IDOneSignal");
+        keys.remove("Photo");
+        Map<String, Object> additionalData = new TreeMap<>();
+        for (String key : keys) {
             additionalData.put(key, doc.getString(key));
         }
         avatar.setAdditionalData(additionalData);
@@ -89,9 +95,9 @@ public class Avatar {
         this.UID = UID;
         DigitalAvatar da = DigitalAvatar.getDA();
         Collection avatars = da.getAvatars();
-        MutableDocument doc = da.getDoc(avatars,"Avatar");
+        MutableDocument doc = da.getDoc(avatars, "Avatar");
         doc.setString("UID", UID);
-        da.saveDoc(avatars,doc);
+        da.saveDoc(avatars, doc);
     }
 
     public String getEmail() {
@@ -194,7 +200,7 @@ public class Avatar {
         DigitalAvatar da = DigitalAvatar.getDA();
         Collection avatars = da.getAvatars();
         MutableDocument doc = da.getDoc(avatars, "Avatar");
-        for(String key : additionalData.keySet()) {
+        for (String key : additionalData.keySet()) {
             doc.setValue(key, additionalData.get(key));
         }
         da.saveDoc(avatars, doc);

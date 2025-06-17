@@ -19,6 +19,10 @@ package org.wso2.extension.siddhi.io.android.sink;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.health.connect.datatypes.ExerciseRoute;
+import android.location.Location;
+import android.location.LocationManager;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
@@ -27,6 +31,7 @@ import android.view.View;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
 
 import com.apvereda.db.AbstractEntity;
 import com.apvereda.db.Avatar;
@@ -42,6 +47,8 @@ import com.apvereda.utils.OneSignalService;
 import com.couchbase.lite.MutableDocument;
 
 import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.wso2.siddhi.android.platform.SiddhiAppService;
 import org.wso2.siddhi.annotation.Example;
 import org.wso2.siddhi.annotation.Extension;
@@ -66,10 +73,13 @@ import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDate;
+import java.time.Period;
 import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -142,6 +152,7 @@ public class ScriptExecutionSink extends Sink {
             throws ConnectionUnavailableException {
         Map<String, Object> event = (Map<String, Object>) o;
         Log.i("ScriptExecutionSink", "Poll received");
+        filterReview((String) event.get("filter"));
         EntityType type = EntityType.fromText((String) event.get("type"));
         if (type == null) {
             Log.i("ScriptExecutionSink", "Invalid type of poll");
@@ -180,6 +191,7 @@ public class ScriptExecutionSink extends Sink {
             exec.setCallback((String) event.get("callback"));
             exec.setScript((String) event.get("script"));
             exec.setPoll((String) event.get("pollId"));
+            exec.setMasterTokenID((String) event.get("masterTokenID"));
             exec.setType(type);
             if (role.contains("Master")) {
                 Log.i("DA-Crowdsensing", "My role is " + role);
@@ -209,6 +221,7 @@ public class ScriptExecutionSink extends Sink {
         values.put("pollId", new Value("pollId", "String", privacy, new Date(), event.get("pollId")));
         values.put("survey", new Value("survey", "String", privacy, new Date(), event.get("survey")));
         values.put("results", new Value("results", "String", privacy, new Date(), "[]"));
+        values.put("creator", new Value("creator", "Boolean", privacy, new Date(), false));
         Entity entity = new Entity(null, "DA-Poll" + event.get("pollId"), EntityType.fromText((String) event.get("type")), privacy, new Date(), values);
         Entity.create(entity);
         Log.i("DA-Crowdsensing", "Poll created: " + entity.getName() + " with type " + entity.getType().getText());
@@ -226,6 +239,7 @@ public class ScriptExecutionSink extends Sink {
         i.putExtra("callback", Avatar.getAvatar().getOneSignalID());
         long nextTimeout = Long.parseLong((String) event.get("timeout")) / 2;
         i.putExtra("timeout", "" + nextTimeout);
+        i.putExtra("masterTokenID", (String) event.get("masterTokenID"));
         SiddhiAppService.getServiceInstance().sendBroadcast(i);
         Log.i("DA-Crowdsensing", "Sending broadcast poll for " + nextRole + " with timeout " + nextTimeout);
         printCSV(context, "Sending broadcast poll for " + nextRole + " with timeout " + nextTimeout, new Date().toString());
@@ -277,46 +291,110 @@ public class ScriptExecutionSink extends Sink {
         }
     }
 
-    public class Executor implements Runnable {
-        private String callback;
-        private String scriptUrl;
-        private String poll;
-        private EntityType type;
+    private void filterReview(String filters) {
+        JSONObject filterJson;
+        try {
+            filterJson = new JSONObject(filters);
+            if (filterJson.length() > 0) {
+                Map<String, Object> additionalData = Avatar.getAvatar().getAdditionalData();
+                for (Iterator<String> it = filterJson.keys(); it.hasNext(); ) {
+                    String key = it.next();
+                    switch (key) {
+                        case "ubication":
+                            JSONObject ubication = filterJson.getJSONObject(key);
+                            int range = ubication.getInt("range");
 
-        @Override
-        public void run() {
-            try {
-                //if answered????
-                DigitalAvatarController dac = new DigitalAvatarController();
-                Entity crowdpoll = (Entity) dac.getAll("DA-Poll" + poll, type).get(0);
-                //scriptUrl = "https://raw.githubusercontent.com/alon159/tfg-crowdsensing/refs/heads/main/script.bsh"
-                String script = getScript();
-                final Interpreter i = new Interpreter();
-                i.set("dac", new DigitalAvatarController());
-                i.set("poll", poll);
-                i.set("type", type);
-                //i.set("myresult", ((Value)crowdpoll.get("myresult")).get()+"");
-                Log.i("DA-Crowdsensing", "Script acquired " + script);
-                printCSV(context, "Script acquired", new Date().toString());
-                i.eval(script);
-                // RECOGER RESULTADO SCRIPT
-                //String contactsResult = (String) ((Value) crowdpoll.get("results")).get();
-                String result = (String) i.get("result");
-                // SI SOY ESCLAVO MANDO RESPONSE AL MASTER
-                //if (callback.contains("onesignalid: ")) {
-                //callback = callback.replace("onesignalid: ", "");
-                if (result != null) {
-                    Intent intent = new Intent("pollResponse");
-                    intent.putExtra("recipient", callback);
-                    intent.putExtra("type", type.getText());
-                    intent.putExtra("pollId", poll);
-                    intent.putExtra("result", result);
-                    SiddhiAppService.getServiceInstance().sendBroadcast(intent);
-                    Log.i("DA-Crowdsensing", "Slave sending result "+result+" to sender " + callback);
-                    printCSV(context, "Slave sending result to " + callback + ": " + result, new Date().toString());
-                    Toast toast = Toast.makeText(context, "Sending results: " + result, Toast.LENGTH_LONG);
-                    toast.show();
+                            JSONArray locationData = (JSONArray) ubication.get("location");
+                            Location location = new Location("Poll");
+                            location.setLatitude(locationData.getDouble(0));
+                            location.setLongitude(locationData.getDouble(1));
+
+                            Location myLocation;
+                            try {
+                                myLocation = obtainLocation();
+                            } catch (ConnectionUnavailableException e) {
+                                return;
+                            }
+
+                            if (location.distanceTo(myLocation) > range) {
+                                return;
+                            }
+                            break;
+                        case "age":
+                            LocalDate today = LocalDate.now();
+                            String birthDateText = (String) additionalData.get("birthDate");
+                            LocalDate birthDate = LocalDate.parse(birthDateText);
+                            Period period = Period.between(birthDate, today);
+                            if (period.getYears() < filterJson.getInt(key)) {
+                                return;
+                            }
+                            break;
+                        case "genre":
+                            if (additionalData.get("genre").equals(filterJson.getString(key))) {
+                                return;
+                            }
+                            break;
+                    }
                 }
+            }
+        } catch (JSONException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+
+    private Location obtainLocation() throws ConnectionUnavailableException {
+        LocationManager locationManager = (LocationManager) SiddhiAppService.getServiceInstance().getSystemService(Context.LOCATION_SERVICE);
+        if (ActivityCompat.checkSelfPermission(SiddhiAppService.getServiceInstance(),
+                android.Manifest.permission.ACCESS_FINE_LOCATION) !=
+                PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(SiddhiAppService.getServiceInstance(),
+                android.Manifest.permission.ACCESS_COARSE_LOCATION) !=
+                PackageManager.PERMISSION_GRANTED) {
+            throw new ConnectionUnavailableException("Android Location permissions are not granted.");
+        }
+        return locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+    }
+}
+
+class Executor implements Runnable {
+    private String callback;
+    private String scriptUrl;
+    private String poll;
+    private String masterTokenID;
+    private EntityType type;
+
+    @Override
+    public void run() {
+        try {
+            //if answered????
+            DigitalAvatarController dac = new DigitalAvatarController();
+            Entity crowdpoll = (Entity) dac.getAll("DA-Poll" + poll, type).get(0);
+            //scriptUrl = "https://raw.githubusercontent.com/alon159/tfg-crowdsensing/refs/heads/main/script.bsh"
+            String script = getScript();
+            final Interpreter i = new Interpreter();
+            i.set("dac", new DigitalAvatarController());
+            i.set("poll", poll);
+            i.set("type", type);
+            //i.set("myresult", ((Value)crowdpoll.get("myresult")).get()+"");
+            Log.i("DA-Crowdsensing", "Script acquired " + script);
+            i.eval(script);
+            // RECOGER RESULTADO SCRIPT
+            //String contactsResult = (String) ((Value) crowdpoll.get("results")).get();
+            String result = (String) i.get("result");
+            // SI SOY ESCLAVO MANDO RESPONSE AL MASTER
+            //if (callback.contains("onesignalid: ")) {
+            //callback = callback.replace("onesignalid: ", "");
+            if (result != null) {
+                Intent intent = new Intent("pollResponse");
+                intent.putExtra("recipient", callback);
+                intent.putExtra("type", type.getText());
+                intent.putExtra("pollId", poll);
+                intent.putExtra("result", result);
+                intent.putExtra("masterTokenID", masterTokenID);
+                SiddhiAppService.getServiceInstance().sendBroadcast(intent);
+                Log.i("DA-Crowdsensing", "Slave sending result " + result + " to sender " + callback);
+            }
 
 //                    } else { // SI SOY EL MASTER, ENTONCES MANDO RESPUESTA DIRECTO AL SERVIDOR
 //                        //CAMBIAR ESTO PARA QUE SE GUARDEN EN LA ENTITY CORRESPONDIENTE
@@ -328,31 +406,31 @@ public class ScriptExecutionSink extends Sink {
 //                        Toast toast = Toast.makeText(context, "Sending results: " + result, Toast.LENGTH_LONG);
 //                        toast.show();
 //                        //postHttpRequest(callback, result);
-                //}
-                //}
-            } catch (EvalError evalError) {
-                evalError.printStackTrace();
-            } catch (MalformedURLException e) {
-                throw new RuntimeException(e);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            } catch (IndexOutOfBoundsException e) {
-                Log.i("ScriptExecutionSink", "Poll not found");
-            }
+            //}
+            //}
+        } catch (EvalError evalError) {
+            evalError.printStackTrace();
+        } catch (MalformedURLException e) {
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        } catch (IndexOutOfBoundsException e) {
+            Log.i("ScriptExecutionSink", "Poll not found");
         }
+    }
 
-        @NonNull
-        private String getScript() throws IOException {
-            String script = "";
-            URL externalURL = new URL(scriptUrl);
-            BufferedReader in = new BufferedReader(new InputStreamReader(externalURL.openStream()));
-            String inputLine;
-            while ((inputLine = in.readLine()) != null) {
-                script += inputLine + '\n';
-            }
-            in.close();
-            return script;
+    @NonNull
+    private String getScript() throws IOException {
+        String script = "";
+        URL externalURL = new URL(scriptUrl);
+        BufferedReader in = new BufferedReader(new InputStreamReader(externalURL.openStream()));
+        String inputLine;
+        while ((inputLine = in.readLine()) != null) {
+            script += inputLine + '\n';
         }
+        in.close();
+        return script;
+    }
 
 //        private void postHttpRequest(String request, String pollResult) {
 //            String result = "";
@@ -385,20 +463,23 @@ public class ScriptExecutionSink extends Sink {
 //            }
 //        }
 
-        public void setCallback(String callback) {
-            this.callback = callback;
-        }
+    public void setCallback(String callback) {
+        this.callback = callback;
+    }
 
-        public void setScript(String script) {
-            scriptUrl = script;
-        }
+    public void setScript(String script) {
+        scriptUrl = script;
+    }
 
-        public void setPoll(String poll) {
-            this.poll = poll;
-        }
+    public void setPoll(String poll) {
+        this.poll = poll;
+    }
 
-        public void setType(EntityType type) {
-            this.type = type;
-        }
+    public void setType(EntityType type) {
+        this.type = type;
+    }
+
+    public void setMasterTokenID(String masterTokenID) {
+        this.masterTokenID = masterTokenID;
     }
 }

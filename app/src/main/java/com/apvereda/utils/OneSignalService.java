@@ -35,16 +35,14 @@ public class OneSignalService {
     }
 
     public static void postMessage(String title, String text, String data, String recipients){
-        //Log.i("OneSignalExample", "Message is:" + text);
+        Log.i("OneSignal", "Message is:" + text);
         List<Contact> contacts;
         JSONArray rec = new JSONArray();
         try {
             if(recipients.equals("Relations")){
                 contacts = Contact.getAllContacts();
-                for(Contact c : contacts){
+                for(Contact c : contacts)
                     rec.put(c.getOneSignalID());
-                }
-                //Implementar else if el nombre de algún grupo de privacidad
             } else {
                 rec.put(recipients);
             }
