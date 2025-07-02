@@ -4,49 +4,49 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.pollsList.SurveyActivity"
-    android:padding="40dp">
+    android:layout_margin="40dp"
+    tools:context=".ui.pollsList.SurveyActivity">
 
     <TextView
         android:id="@+id/pollid"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Poll ID: 1234"
         android:textSize="30sp"
         android:textStyle="bold"
-        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toTopOf="@id/surveyView"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <ScrollView
         android:id="@+id/surveyView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/pollid"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+        app:layout_constraintTop_toBottomOf="@id/pollid">
+
         <LinearLayout
             android:id="@+id/surveyLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"/>
+            android:orientation="vertical" />
     </ScrollView>
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/subscriptionButton"
+        style="@style/Widget.Material3.Button.OutlinedButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Suscribete"
-        android:visibility="gone"
+        android:text="@string/survey_subscribe"
         android:textColor="@android:color/holo_red_dark"
-        style="@style/Widget.Material3.Button.OutlinedButton"
+        android:visibility="gone"
         app:icon="@drawable/add_friend"
         app:iconGravity="textStart"
         app:iconPadding="10dp"
         app:iconTint="@android:color/holo_red_dark"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"/>
+        app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

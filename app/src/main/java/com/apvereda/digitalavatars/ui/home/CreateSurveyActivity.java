@@ -265,7 +265,7 @@ public class CreateSurveyActivity extends AppCompatActivity {
             @Override
             public void afterTextChanged(Editable s) {
                 if (!s.toString().isEmpty()) {
-                    String[] answerAux = s.toString().split(",");
+                    String[] answerAux = s.toString().split(",\\s*");
                     answers.set(Integer.parseInt(layout.getTag().toString()), answerAux);
                 }
             }
@@ -282,10 +282,10 @@ public class CreateSurveyActivity extends AppCompatActivity {
         btnToggle.setOnClickListener(v -> {
             if (advancedOptions.getVisibility() == View.GONE) {
                 advancedOptions.setVisibility(View.VISIBLE);
-                btnToggle.setText("Ocultar Ajustes avanzados");
+                btnToggle.setText(R.string.advanced_settings_hide);
             } else {
                 advancedOptions.setVisibility(View.GONE);
-                btnToggle.setText("Mostrar Ajustes avanzados");
+                btnToggle.setText(R.string.advanced_settings_show);
             }
         });
 
@@ -329,9 +329,9 @@ public class CreateSurveyActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 new MaterialAlertDialogBuilder(view.getContext())
-                        .setTitle("Confirmar decisión")
-                        .setMessage("¿Estás seguro de que deseas enviar esta decisión?")
-                        .setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
+                        .setTitle(R.string.alert_title)
+                        .setMessage(R.string.alert_message)
+                        .setPositiveButton(R.string.alert_accept, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 String scriptUrl = switch (surveyType) {
@@ -389,7 +389,7 @@ public class CreateSurveyActivity extends AppCompatActivity {
                                 finish();
                             }
                         })
-                        .setNegativeButton("Cancelar", null)
+                        .setNegativeButton(R.string.alert_cancel, null)
                         .show();
 
             }
@@ -411,7 +411,7 @@ public class CreateSurveyActivity extends AppCompatActivity {
         contenidoLabel.setLayoutParams(new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.WRAP_CONTENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT));
-        contenidoLabel.setText("Contenido de la Encuesta");
+        contenidoLabel.setText(R.string.survey_text_content);
         contenidoLabel.setTextSize(16);
         contenidoLabel.setPadding(0, 24, 0, 0);
         mainLayout.addView(contenidoLabel);
@@ -423,7 +423,7 @@ public class CreateSurveyActivity extends AppCompatActivity {
                 LinearLayout.LayoutParams.MATCH_PARENT,
                 LinearLayout.LayoutParams.MATCH_PARENT
         ));
-        newSurvey.setHint("Escribe aquí el contenido");
+        newSurvey.setHint(R.string.survey_text_content_hint);
         newSurvey.setInputType(EditorInfo.TYPE_TEXT_FLAG_MULTI_LINE);
         newSurvey.setGravity(Gravity.TOP);
         newSurvey.addTextChangedListener(new TextWatcher() {
@@ -454,7 +454,7 @@ public class CreateSurveyActivity extends AppCompatActivity {
         respuestasLabel.setLayoutParams(new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.WRAP_CONTENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT));
-        respuestasLabel.setText("Respuestas");
+        respuestasLabel.setText(R.string.survey_text_answers);
         respuestasLabel.setTextSize(16);
         respuestasLabel.setPadding(0, 0, dpToPx(16), 0);
         settingsLayout.addView(respuestasLabel);
@@ -469,7 +469,7 @@ public class CreateSurveyActivity extends AppCompatActivity {
         inputNumAnswers.setLayoutParams(new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT));
-        inputNumAnswers.setHint("respuestas");
+        inputNumAnswers.setHint(R.string.survey_text_answers_hint);
         inputNumAnswers.setInputType(EditorInfo.TYPE_CLASS_TEXT);
         inputNumAnswers.setText(getString(R.string.default_answers));
         String[] answerAux = inputNumAnswers.getText().toString().split(",");
@@ -553,7 +553,8 @@ public class CreateSurveyActivity extends AppCompatActivity {
 
     private JSONArray obtainLocation() throws ConnectionUnavailableException {
         JSONArray input = new JSONArray();
-        LocationManager locationManager = (LocationManager) SiddhiAppService.getServiceInstance().getSystemService(Context.LOCATION_SERVICE);
+        LocationManager locationManager = (LocationManager) SiddhiAppService.getServiceInstance()
+                .getSystemService(Context.LOCATION_SERVICE);
         if (ActivityCompat.checkSelfPermission(SiddhiAppService.getServiceInstance(),
                 android.Manifest.permission.ACCESS_FINE_LOCATION) !=
                 PackageManager.PERMISSION_GRANTED

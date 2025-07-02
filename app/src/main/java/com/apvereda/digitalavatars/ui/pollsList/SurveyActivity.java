@@ -61,12 +61,12 @@ public class SurveyActivity extends AppCompatActivity {
                     subscriptionButton.setTextColor(ContextCompat.getColor(getApplicationContext(), android.R.color.white));
 
                     subscriptionButton.setIconTintResource(android.R.color.white);
-                    subscriptionButton.setText("Suscrito");
+                    subscriptionButton.setText(R.string.survey_subscribed);
                 } else {
                     subscriptionButton.setBackgroundColor(ContextCompat.getColor(getApplicationContext(), android.R.color.transparent));
                     subscriptionButton.setTextColor(ContextCompat.getColor(getApplicationContext(), android.R.color.holo_red_dark));
                     subscriptionButton.setIconTintResource(android.R.color.holo_red_dark);
-                    subscriptionButton.setText("Suscribete");
+                    subscriptionButton.setText(R.string.survey_subscribe);
                 }
             }
         });
@@ -130,12 +130,11 @@ public class SurveyActivity extends AppCompatActivity {
                 @Override
                 public void onClick(View view) {
                     new MaterialAlertDialogBuilder(view.getContext())
-                            .setTitle("Confirmar decisión")
-                            .setMessage("¿Estás seguro de que deseas enviar esta decisión?")
-                            .setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
+                            .setTitle(R.string.alert_title)
+                            .setMessage(R.string.alert_message)
+                            .setPositiveButton(R.string.alert_accept, new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialogInterface, int i) {
-                                    // Aquí pones la lógica de envío
                                     String result = "{ ";
                                     for (int x = 0; x < answers.length; x++) {
                                         result += "q" + x + " : " + answers[x] + ", ";
@@ -145,7 +144,7 @@ public class SurveyActivity extends AppCompatActivity {
                                     Entity poll = (Entity) dac.getAll(pollId, type).get(0);
                                     String[] privacy = {"public,public"};
                                     poll.set("myresult", new Value("myresult", "String", privacy, new Date(), result));
-                                    //poll.set("subscription", new Value("subscription", "Boolean", privacy, new Date(), subscriptionState));
+                                    poll.set("subscription", new Value("subscription", "Boolean", privacy, new Date(), subscriptionState));
                                     Log.i("DA-Crowd", "Entity submmited with this answers: " + result);
                                     Log.i("DA-Crowd", "Entity submmited: " + poll.getValues().keySet());
                                     Toast toast = Toast.makeText(view.getContext(), "Survey result recorded: " + result, Toast.LENGTH_LONG);
@@ -154,7 +153,7 @@ public class SurveyActivity extends AppCompatActivity {
                                     finish();
                                 }
                             })
-                            .setNegativeButton("Cancelar", null)
+                            .setNegativeButton(R.string.alert_cancel, null)
                             .show();
 
                 }

@@ -58,7 +58,7 @@ public class SubscriptionsAdapter extends BaseAdapter {
                 view.getContext().startActivity(i);
             }
         });
-        return (convertView);
+        return convertView;
     }
 
     @Override

@@ -110,9 +110,9 @@ public class AdditionalDataActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 new MaterialAlertDialogBuilder(v.getContext())
-                        .setTitle("Confirmar decisión")
-                        .setMessage("¿Estás seguro de que deseas enviar esta decisión?")
-                        .setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
+                        .setTitle(R.string.alert_title)
+                        .setMessage(R.string.alert_message)
+                        .setPositiveButton(R.string.alert_accept, new DialogInterface.OnClickListener() {
 
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
@@ -124,7 +124,7 @@ public class AdditionalDataActivity extends AppCompatActivity {
                                 finish();
                             }
                         })
-                        .setNegativeButton("Cancelar", null)
+                        .setNegativeButton(R.string.alert_cancel, null)
                         .show();
             }
         });

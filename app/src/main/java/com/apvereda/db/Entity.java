@@ -59,7 +59,7 @@ public class Entity extends AbstractEntity{
         this.values = values;
     }
 
-    private Object getValue(String key) {
+    public Object getValue(String key) {
         return values.get(key);
     }
 

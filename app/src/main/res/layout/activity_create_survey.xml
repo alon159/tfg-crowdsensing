@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="50dp"
+    android:layout_margin="40dp"
     tools:context=".ui.home.CreateSurveyActivity">
 
     <!-- Texto: Tipo de Encuesta -->
@@ -12,7 +12,7 @@
         android:id="@+id/tipoEncuestaLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Tipo de Encuesta"
+        android:text="@string/create_survey_type"
         android:textSize="16sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -34,23 +34,23 @@
             style="@style/Widget.Material3.Button.OutlinedButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="OFFER" />
+            android:text="@string/create_survey_type_offer" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_request"
             style="@style/Widget.Material3.Button.OutlinedButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="REQUEST" />
+            android:text="@string/create_survey_type_request" />
     </com.google.android.material.button.MaterialButtonToggleGroup>
 
     <TextView
         android:id="@+id/filtersLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Filtros"
-        android:textSize="16sp"
         android:layout_marginTop="10dp"
+        android:text="@string/create_survey_filters"
+        android:textSize="16sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tipoEncuestaToggle" />
 
@@ -60,24 +60,27 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         app:layout_constraintTop_toBottomOf="@id/filtersLabel">
+
         <com.google.android.material.checkbox.MaterialCheckBox
             android:id="@+id/ubicationFilter"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:text="Ubicación"/>
+            android:text="@string/create_survey_filters_ubication" />
+
         <com.google.android.material.checkbox.MaterialCheckBox
             android:id="@+id/ageFilter"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:text="Edad"/>
+            android:text="@string/create_survey_filters_age" />
+
         <com.google.android.material.checkbox.MaterialCheckBox
             android:id="@+id/genreFilter"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:text="Género"/>
+            android:text="@string/create_survey_filters_genre" />
     </LinearLayout>
 
     <LinearLayout
@@ -93,7 +96,7 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="16dp"
             android:layout_weight="2"
-            android:text="Rango"
+            android:text="@string/create_survey_filters_ubication_range"
             android:textSize="16sp" />
 
         <com.google.android.material.textfield.TextInputLayout
@@ -105,10 +108,11 @@
                 android:id="@+id/rangoUbicacion"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="distancia (en km)"
-                android:inputType="number"/>
+                android:hint="@string/create_survey_filters_ubication_range_hint"
+                android:inputType="number" />
         </com.google.android.material.textfield.TextInputLayout>
     </LinearLayout>
+
     <LinearLayout
         android:id="@+id/ageSetting"
         android:layout_width="match_parent"
@@ -120,9 +124,9 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="2"
             android:layout_marginEnd="16dp"
-            android:text="Edad mínima"
+            android:layout_weight="2"
+            android:text="@string/create_survey_filters_age_min"
             android:textSize="16sp" />
 
         <com.google.android.material.textfield.TextInputLayout
@@ -134,10 +138,11 @@
                 android:id="@+id/edadMinima"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="edad (en años)"
-                android:inputType="number"/>
+                android:hint="@string/create_survey_filters_age_min_hint"
+                android:inputType="number" />
         </com.google.android.material.textfield.TextInputLayout>
     </LinearLayout>
+
     <LinearLayout
         android:id="@+id/genreSetting"
         android:layout_width="match_parent"
@@ -149,9 +154,9 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="2"
             android:layout_marginEnd="16dp"
-            android:text="Géneros"
+            android:layout_weight="2"
+            android:text="@string/create_survey_filters_genre_selection"
             android:textSize="16sp" />
 
         <com.google.android.material.textfield.TextInputLayout
@@ -163,16 +168,19 @@
                 android:id="@+id/generoSelection"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="géneros (usar comas)"
-                android:inputType="text"/>
+                android:hint="@string/create_survey_filters_genre_selection_hint"
+                android:inputType="text" />
         </com.google.android.material.textfield.TextInputLayout>
     </LinearLayout>
 
     <!-- Texto: Contenido de la Encuesta -->
     <ScrollView
         android:id="@+id/newSurveysScrollView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@id/sendSurveyButton"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/genreSetting">
 
         <LinearLayout
@@ -193,7 +201,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="24dp"
-                    android:text="Contenido de la Encuesta"
+                    android:text="@string/survey_text_content"
                     android:textSize="16sp" />
 
                 <!-- Área de texto -->
@@ -201,7 +209,7 @@
                     android:id="@+id/textInputLayout"
                     android:layout_width="match_parent"
                     android:layout_height="120dp"
-                    android:hint="Escribe aquí el contenido">
+                    android:hint="@string/survey_text_content_hint">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/textInputEncuesta"
@@ -220,9 +228,9 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_weight="2"
                         android:layout_marginEnd="16dp"
-                        android:text="Respuestas"
+                        android:layout_weight="2"
+                        android:text="@string/survey_text_answers"
                         android:textSize="16sp" />
 
                     <com.google.android.material.textfield.TextInputLayout
@@ -234,7 +242,7 @@
                             android:id="@+id/inputNumAnswers"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:hint="respuestas"
+                            android:hint="@string/survey_text_answers_hint"
                             android:inputType="text"
                             android:text="@string/default_answers" />
                     </com.google.android.material.textfield.TextInputLayout>
@@ -256,7 +264,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@android:color/transparent"
-                android:text="Mostrar Ajustes avanzados"
+                android:text="@string/advanced_settings_show"
                 android:textColor="@color/colorPrimary"
                 app:icon="@drawable/baseline_arrow_forward_24"
                 app:iconGravity="textStart"
@@ -291,7 +299,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="16dp"
-                        android:text="Timeout"
+                        android:text="@string/advanced_settings_timeout"
                         android:textSize="16sp" />
 
                     <com.google.android.material.textfield.TextInputLayout
@@ -303,7 +311,7 @@
                             android:id="@+id/inputTimeout"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:hint="segundos"
+                            android:hint="@string/advanced_settings_timeout_hint"
                             android:inputType="number"
                             android:text="@string/default_timeout" />
                     </com.google.android.material.textfield.TextInputLayout>
@@ -320,7 +328,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="16dp"
-                        android:text="Alcance"
+                        android:text="@string/advanced_settings_scope"
                         android:textSize="16sp" />
 
                     <com.google.android.material.textfield.TextInputLayout
@@ -332,7 +340,7 @@
                             android:id="@+id/inputScope"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:hint="personas"
+                            android:hint="@string/advanced_settings_scope_hint"
                             android:inputType="number"
                             android:text="@string/default_scope" />
                     </com.google.android.material.textfield.TextInputLayout>
@@ -347,11 +355,11 @@
         android:id="@+id/sendSurveyButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
         android:enabled="false"
-        android:text="Enviar"
-        app:layout_constraintTop_toBottomOf="@id/newSurveysScrollView"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        android:text="@string/send"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

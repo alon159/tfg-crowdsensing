@@ -113,7 +113,7 @@ public class DigitalAvatarController {
                         Value v = new Value(//d.getString("uid"),
                                 d.getString("name"), d.getString("type"), d.getArray("privacy").toList().toArray(new String[]{}),
                                 d.getDate("timestamp"), null);
-                        Log.d("DAC", "Name: "+v.getName()+", Type :" + d.getString("type"));
+                        Log.d("DAC", "Name: " + v.getName() + ", Type :" + d.getString("type"));
                         switch (v.getType()) {
                             case "String" -> v.set(d.getString("value"));
                             case "int" -> v.set(d.getInt("value"));
@@ -132,14 +132,12 @@ public class DigitalAvatarController {
         return list;
     }
 
-    public List<AbstractEntity> getAll(String name, Entity entity) {
+    public List<AbstractEntity> getAll() {
         List<AbstractEntity> list = new ArrayList<>();
         Collection col = DigitalAvatar.getDA().getEntities();
         Query query = QueryBuilder
                 .select(SelectResult.all())
-                .from(DigitalAvatar.getDataSource(col))
-                .where(Expression.property("type").equalTo(Expression.string(entity.getType().getText()))
-                        .and(Expression.property("name").equalTo(Expression.string(name))));
+                .from(DigitalAvatar.getDataSource(col));
         try {
             ResultSet rs = query.execute();
             for (Result r : rs) {

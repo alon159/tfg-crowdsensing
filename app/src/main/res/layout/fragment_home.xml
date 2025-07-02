@@ -22,7 +22,7 @@
             android:layout_height="wrap_content"
             android:paddingTop="16dp"
             android:paddingBottom="16dp"
-            android:text="Solicitudes"
+            android:text="@string/survey_requests"
             android:textColor="?android:textColorPrimaryInverse"
             android:textSize="18sp"
             app:cornerRadius="6dp" />
@@ -52,7 +52,7 @@
             android:layout_height="match_parent"
             android:paddingTop="16dp"
             android:paddingBottom="16dp"
-            android:text="Ofrecimientos"
+            android:text="@string/survey_offers"
             android:textColor="?android:textColorPrimaryInverse"
             android:textSize="18sp"
             app:cornerRadius="6dp" />

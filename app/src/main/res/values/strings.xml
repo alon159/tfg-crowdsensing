@@ -1,22 +1,23 @@
 <resources>
-    <string name="app_name">CrowdSense - DA - UCAmI</string>
-    <string name="title_activity_drawer">Digital Avatars</string>
-    <string name="navigation_drawer_open">Open navigation drawer</string>
-    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="app_name" translatable="false">CrowdSense</string>
+    <string name="title_activity_drawer">Avatares Digitales</string>
+    <string name="navigation_drawer_open">Abrir menú de navegación</string>
+    <string name="navigation_drawer_close">Cerrar menú de navegación</string>
     <string name="nav_header_title">Android Studio</string>
     <string name="nav_header_subtitle">android.studio@android.com</string>
-    <string name="nav_header_desc">Navigation header</string>
-    <string name="action_readapps">Read Siddhi Apps</string>
-    <string name="action_remove">Remove Siddhi Apps</string>
-    <string name="action_readfriends">Add Friends from file</string>
-    <string name="menu_profile">My profile</string>
-    <string name="menu_friend">Add friends</string>
-    <string name="menu_home">Home</string>
-    <string name="menu_fried_list">My friends</string>
+    <string name="nav_header_desc">Cabecera de navegación</string>
+    <string name="action_readapps">Leer Apps de Siddhi</string>
+    <string name="action_remove">Eliminar Apps de Siddhi</string>
+    <string name="action_readfriends">Añadir amigos desde un archivo</string>
+    <string name="menu_profile">Mi perfil</string>
+    <string name="menu_results">Mis resultados</string>
+    <string name="menu_friend">Añadir amigos</string>
+    <string name="menu_home">Inicio</string>
+    <string name="menu_fried_list">Mis amigos</string>
 
-    <string name="home_second">Home Second</string>
-    <string name="title_activity_profile">ProfileActivity</string>
-    <string name="large_text">
+    <string name="home_second">Inicio Segundo</string>
+    <string name="title_activity_profile">Actividad de perfil</string>
+    <string name="large_text" translatable="false">
         "Material is the metaphor.\n\n"
 
         "A material metaphor is the unifying theory of a rationalized space and a system of motion."
@@ -105,22 +106,22 @@
         "For example, position the FAB to one side of stream of a cards so the FAB won’t interfere "
         "when a user tries to pick up one of cards.\n\n"
     </string>
-    <string name="title_activity_sensorsim">Sensor Simulation</string>
-    <string name="next">Next</string>
-    <string name="previous">Previous</string>
+    <string name="title_activity_sensorsim">Simulación de sensor</string>
+    <string name="next">Siguiente</string>
+    <string name="previous">Anterior</string>
     <string name="default_notification_channel_id" translatable="false">fcm_default_channel</string>
-    <string name="request_assistance_title">ASSISTANCE REQUESTS</string>
-    <string name="offer_assistance_title">ASSISTANCE OFFERS</string>
-    <string name="accept_offer">Accept</string>
-    <string name="decline_offer">Decline</string>
-    <string name="default_timeout">60000</string>
-    <string name="default_scope">5</string>
-    <string name="default_answers">Yes, No</string>
+    <string name="request_assistance_title">ASISTENCIA SOLICITADA</string>
+    <string name="offer_assistance_title">ASISTENCIA OFRECIDA</string>
+    <string name="accept_offer">Aceptar</string>
+    <string name="decline_offer">Rechazar</string>
+    <string name="default_timeout" translatable="false">60000</string>
+    <string name="default_scope" translatable="false">5</string>
+    <string name="default_answers">Si,No</string>
     <!-- Strings used for fragments for navigation -->
-    <string name="first_fragment_label">First Fragment</string>
-    <string name="second_fragment_label">Second Fragment</string>
+    <string name="first_fragment_label">Primer Fragmento</string>
+    <string name="second_fragment_label">Segundo Fragmento</string>
 
-    <string name="lorem_ipsum">
+    <string name="lorem_ipsum" translatable="false">
         Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam in scelerisque sem. Mauris
         volutpat, dolor id interdum ullamcorper, risus dolor egestas lectus, sit amet mattis purus
         dui nec risus. Maecenas non sodales nisi, vel dictum dolor. Class aptent taciti sociosqu ad
@@ -156,5 +157,63 @@
         libero vel nunc consequat, quis tincidunt nisl eleifend. Cras bibendum enim a justo luctus
         vestibulum. Fusce dictum libero quis erat maximus, vitae volutpat diam dignissim.
     </string>
+    <string name="hello_blank_fragment">Hola fragmento en blanco</string>
+    <string name="results_created">Creadas</string>
+    <string name="results_subscribed">Suscritas</string>
+    <string name="title_results_created">Encuestas creadas</string>
+    <string name="title_results_subscribed">Encuestas suscritas</string>
+    <string name="label_results_available">Disponible</string>
+    <string name="label_results_no_available">No Disponible</string>
+    <string name="alert_accept">Aceptar</string>
+    <string name="alert_cancel">Cancelar</string>
+    <string name="advanced_settings_hide">Ocultar Ajustes avanzados</string>
+    <string name="advanced_settings_show">Mostrar Ajustes avanzados</string>
+    <string name="alert_title">Confirmar decisión</string>
+    <string name="alert_message">¿Estás seguro de que deseas enviar esta decisión?</string>
+    <string name="survey_text_content">Contenido de la Encuesta</string>
+    <string name="survey_text_content_hint">Escribe aquí el contenido</string>
+    <string name="survey_text_answers">Respuestas</string>
+    <string name="survey_text_answers_hint">respuestas</string>
+    <string name="additional_data_birthdate">Fecha de nacimiento</string>
+    <string name="additional_data_birthdate_hint">Selecciona una fecha</string>
+    <string name="additional_data_genre">Género</string>
+    <string name="additional_data_genre_male">Masculino</string>
+    <string name="additional_data_genre_female">Femenino</string>
+    <string name="additional_data_genre_other">Otro</string>
+    <string name="additional_data_send">Agregar datos</string>
+    <string name="create_survey_type">Tipo de Encuesta</string>
+    <string name="create_survey_type_offer">OFRECER</string>
+    <string name="create_survey_type_request">SOLICITAR</string>
+    <string name="create_survey_filters">Filtros</string>
+    <string name="create_survey_filters_ubication">Ubicación</string>
+    <string name="create_survey_filters_age">Edad</string>
+    <string name="create_survey_filters_genre">Género</string>
+    <string name="create_survey_filters_ubication_range">Rango</string>
+    <string name="create_survey_filters_ubication_range_hint">distancia (km)</string>
+    <string name="create_survey_filters_age_min">Edad mínima</string>
+    <string name="create_survey_filters_age_min_hint">edad (en años)</string>
+    <string name="create_survey_filters_genre_selection">Géneros</string>
+    <string name="create_survey_filters_genre_selection_hint">géneros (usar comas)</string>
+    <string name="advanced_settings_timeout">Timeout</string>
+    <string name="advanced_settings_timeout_hint">milisegundos</string>
+    <string name="advanced_settings_scope">Alcance</string>
+    <string name="advanced_settings_scope_hint">personas</string>
+    <string name="send">Enviar</string>
+    <string name="result_title">Respuestas:</string>
+    <string name="survey_subscribe">Suscribete</string>
+    <string name="survey_subscribed">Suscrito</string>
+    <string name="profile_text_name">Nombre</string>
+    <string name="profile_text_name_hint">Developer Name</string>
+    <string name="profile_text_mobile">Móvil</string>
+    <string name="profile_text_mobile_hint">+34999999999</string>
+    <string name="profile_text_email">Email</string>
+    <string name="profile_text_email_hint">ejemplo@ejemplo.com</string>
+    <string name="profile_text_token">Token de OneSignal</string>
+    <string name="profile_text_token_hint">XXX-XXX-XXX-XXX</string>
+    <string name="profile_info">Información de cuenta</string>
+    <string name="survey_requests">Solicitudes</string>
+    <string name="survey_offers">Ofrecimientos</string>
+    <string name="review">Revisar</string>
+    <string name="answer">Responder</string>
 
 </resources>

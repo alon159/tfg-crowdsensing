@@ -22,14 +22,14 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
             android:paddingLeft="10dp"
-            android:text="Fecha de nacimiento"
+            android:text="@string/additional_data_birthdate"
             android:textSize="16sp" />
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/inputFechaLayout"
             android:layout_width="200dp"
             android:layout_height="wrap_content"
-            android:hint="Selecciona una fecha">
+            android:hint="@string/additional_data_birthdate_hint">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/inputFecha"
@@ -48,7 +48,7 @@
             android:layout_marginTop="24dp"
             android:layout_marginBottom="8dp"
             android:paddingLeft="10dp"
-            android:text="Género"
+            android:text="@string/additional_data_genre"
             android:textSize="16sp" />
 
         <com.google.android.material.button.MaterialButtonToggleGroup
@@ -63,7 +63,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Masculino" />
+                android:text="@string/additional_data_genre_male" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/generoFemenino"
@@ -71,7 +71,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Femenino" />
+                android:text="@string/additional_data_genre_female" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/generoOtro"
@@ -79,7 +79,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Otro" />
+                android:text="@string/additional_data_genre_other" />
         </com.google.android.material.button.MaterialButtonToggleGroup>
 
         <com.google.android.material.button.MaterialButton
@@ -89,6 +89,6 @@
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="24dp"
             android:paddingHorizontal="40dp"
-            android:text="Agregar datos" />
+            android:text="@string/additional_data_send" />
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

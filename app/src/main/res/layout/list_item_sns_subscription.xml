@@ -34,7 +34,6 @@
                 android:layout_marginTop="10dp"
                 android:lines="1"
                 android:maxLines="1"
-                android:text="XXX --> XXX"
                 android:textAlignment="textStart"
                 android:textSize="16dp" />
             <!--TextView
@@ -74,7 +73,7 @@
             android:id="@+id/btndelete"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Answer"
+            android:text="@string/answer"
             android:layout_weight="1"/>
     </LinearLayout>
     <View

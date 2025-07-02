@@ -14,11 +14,6 @@
     <uses-feature
         android:name="android.hardware.sensor.accelerometer"
         android:required="true" />
-    <uses-feature
-        android:name="android.hardware.sensor.relative_humidity"
-        android:required="true" />
-    <uses-feature android:name="android.hardware.sensor.stepcounter" />
-    <uses-feature android:name="android.hardware.sensor.stepdetector" />
 
     <application
         android:allowBackup="true"
@@ -27,6 +22,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity
+            android:name=".ui.results.ResultReviewActivity"
+            android:exported="false" />
         <activity
             android:name=".ui.additionalData.AdditionalDataActivity"
             android:exported="false" />
@@ -72,8 +70,7 @@
             android:name="org.wso2.siddhi.android.platform.SiddhiAppService"
             android:enabled="true"
             android:exported="true"
-            android:foregroundServiceType="remoteMessaging"
-            android:permission="TODO">
+            android:foregroundServiceType="remoteMessaging">
             <intent-filter>
                 <action android:name="org.wso2.siddhiappservice.AIDL" />
 

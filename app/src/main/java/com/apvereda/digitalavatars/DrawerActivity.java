@@ -24,6 +24,7 @@ import com.apvereda.digitalavatars.ui.friendslist.MyFriendsFragment;
 import com.apvereda.digitalavatars.ui.addfriend.AddFriendFragment;
 import com.apvereda.digitalavatars.ui.home.HomeFragment;
 import com.apvereda.digitalavatars.ui.profile.ProfileFragment;
+import com.apvereda.digitalavatars.ui.results.ResultsFragment;
 import com.apvereda.utils.DigitalAvatar;
 import com.apvereda.utils.OneSignalService;
 import com.apvereda.utils.SiddhiService;
@@ -76,9 +77,10 @@ public class DrawerActivity extends AppCompatActivity {
     ProfileFragment profileFragment = new ProfileFragment();
     AddFriendFragment friendFragment = new AddFriendFragment();
     MyFriendsFragment friendlistFragment = new MyFriendsFragment();
+    ResultsFragment resultsFragment = new ResultsFragment();
     DrawerLayout drawer;
-    Fragment[] fragments = new Fragment[]{homeFragment, profileFragment, friendFragment, friendlistFragment};
-    String[] fragmentTAGS = new String[]{"home", "profile", "addfriend", "friendlist"};
+    Fragment[] fragments = new Fragment[]{homeFragment, profileFragment, resultsFragment, friendFragment, friendlistFragment};
+    String[] fragmentTAGS = new String[]{"home", "profile", "results","addfriend", "friendlist"};
     Toolbar toolbar;
 
     @Override
@@ -113,6 +115,7 @@ public class DrawerActivity extends AppCompatActivity {
                                 ft.hide(fragments[1]);
                                 ft.hide(fragments[2]);
                                 ft.hide(fragments[3]);
+                                ft.hide(fragments[4]);
                                 toolbar.setVisibility(View.VISIBLE);
                                 break;
                             case R.id.nav_profile:
@@ -121,21 +124,32 @@ public class DrawerActivity extends AppCompatActivity {
                                 ft.hide(fragments[0]);
                                 ft.hide(fragments[2]);
                                 ft.hide(fragments[3]);
+                                ft.hide(fragments[4]);
                                 toolbar.setVisibility(View.GONE);
                                 break;
-                            case R.id.nav_add_friend:
+                            case R.id.nav_results:
                                 ft.show(fragments[2]);
                                 ft.hide(fragments[0]);
                                 ft.hide(fragments[1]);
                                 ft.hide(fragments[3]);
-                                toolbar.setVisibility(View.GONE);
+                                ft.hide(fragments[4]);
+                                toolbar.setVisibility(View.VISIBLE);
                                 break;
-                            case R.id.nav_friend_list:
-                                friendlistFragment.updateFriends();
+                            case R.id.nav_add_friend:
                                 ft.show(fragments[3]);
                                 ft.hide(fragments[0]);
                                 ft.hide(fragments[1]);
                                 ft.hide(fragments[2]);
+                                ft.hide(fragments[4]);
+                                toolbar.setVisibility(View.GONE);
+                                break;
+                            case R.id.nav_friend_list:
+                                friendlistFragment.updateFriends();
+                                ft.show(fragments[4]);
+                                ft.hide(fragments[0]);
+                                ft.hide(fragments[1]);
+                                ft.hide(fragments[2]);
+                                ft.hide(fragments[3]);
                                 toolbar.setVisibility(View.VISIBLE);
                                 break;
                         }
@@ -151,9 +165,11 @@ public class DrawerActivity extends AppCompatActivity {
                 .add(R.id.nav_host_fragment, fragments[1], fragmentTAGS[1])
                 .add(R.id.nav_host_fragment, fragments[2], fragmentTAGS[2])
                 .add(R.id.nav_host_fragment, fragments[3], fragmentTAGS[3])
+                .add(R.id.nav_host_fragment, fragments[4], fragmentTAGS[4])
                 .hide(fragments[1])
                 .hide(fragments[2])
                 .hide(fragments[3])
+                .hide(fragments[4])
                 .commit();
 
         /*
