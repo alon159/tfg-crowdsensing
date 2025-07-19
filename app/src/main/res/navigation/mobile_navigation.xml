@@ -52,7 +52,7 @@
     <fragment
         android:id="@+id/nav_friend_list"
         android:name="com.apvereda.digitalavatars.ui.addfriend.AddFriendFragment"
-        android:label="@string/menu_fried_list"
+        android:label="@string/menu_friend_list"
         tools:layout="@layout/fragment_friend_list" >
         <action
             android:id="@+id/action_nav_add_friend_to_nav_home"

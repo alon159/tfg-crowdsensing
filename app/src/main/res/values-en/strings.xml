@@ -7,9 +7,9 @@
     <string name="action_readfriends">Add Friends from file</string>
     <string name="menu_profile">My profile</string>
     <string name="menu_results">My results</string>
-    <string name="menu_friend">Add friends</string>
+    <string name="menu_friend">Add contact</string>
     <string name="menu_home">Home</string>
-    <string name="menu_fried_list">My friends</string>
+    <string name="menu_friend_list">My contacts</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="nav_header_title">Android Studio</string>
@@ -76,7 +76,7 @@
     <string name="survey_requests">Requests</string>
     <string name="survey_offers">Offers</string>
     <string name="review">Review</string>
-    <string name="answer">Reply</string>
+    <string name="answer">Answer</string>
     <string name="request_assistance_title">ASSISTANCE REQUESTS</string>
     <string name="offer_assistance_title">ASSISTANCE OFFERS</string>
     <string name="accept_offer">Accept</string>

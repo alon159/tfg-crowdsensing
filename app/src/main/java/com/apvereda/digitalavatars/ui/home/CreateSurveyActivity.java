@@ -68,12 +68,15 @@ public class CreateSurveyActivity extends AppCompatActivity {
     Boolean messageContentExists = false;
     ArrayList<String> message = new ArrayList<>();
     ArrayList<String[]> answers = new ArrayList<>();
+    int rangeFilterContent;
+    Double[] ubicationFilterContent;
+    int ageFilterContent;
+    String[] genreFilterContent;
     Long timeout;
     int scopeMax;
     int surveysCount = 1;
     private static final String CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
     private static final SecureRandom random = new SecureRandom();
-    JSONObject filters = new JSONObject();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -109,14 +112,8 @@ public class CreateSurveyActivity extends AppCompatActivity {
             public void onCheckedStateChangedListener(@NonNull MaterialCheckBox checkBox, int state) {
                 if (state == MaterialCheckBox.STATE_CHECKED) {
                     ubicationSetting.setVisibility(View.VISIBLE);
-                    try {
-                        filters.put("ubication", JSONObject.NULL);
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
                 } else {
                     ubicationSetting.setVisibility(View.GONE);
-                    filters.remove("ubication");
                 }
             }
         });
@@ -134,14 +131,9 @@ public class CreateSurveyActivity extends AppCompatActivity {
 
             @Override
             public void afterTextChanged(Editable s) {
-                if (!s.toString().isEmpty())
-                    try {
-                        JSONObject aux = new JSONObject();
-                        aux.put("range", s.toString());
-                        filters.put("ubication", aux.toString());
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
+                if (!s.toString().isEmpty()) {
+                    rangeFilterContent=Integer.parseInt(s.toString());
+                }
             }
         });
         MaterialCheckBox ageFilter = findViewById(R.id.ageFilter);
@@ -152,14 +144,8 @@ public class CreateSurveyActivity extends AppCompatActivity {
             public void onCheckedStateChangedListener(@NonNull MaterialCheckBox checkBox, int state) {
                 if (state == MaterialCheckBox.STATE_CHECKED) {
                     ageSetting.setVisibility(View.VISIBLE);
-                    try {
-                        filters.put("age", JSONObject.NULL);
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
                 } else {
                     ageSetting.setVisibility(View.GONE);
-                    filters.remove("age");
                 }
             }
         });
@@ -177,12 +163,9 @@ public class CreateSurveyActivity extends AppCompatActivity {
 
             @Override
             public void afterTextChanged(Editable s) {
-                if (!s.toString().isEmpty())
-                    try {
-                        filters.put("age", Integer.parseInt(s.toString()));
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
+                if (!s.toString().isEmpty()) {
+                    ageFilterContent=Integer.parseInt(s.toString());
+                }
             }
         });
         MaterialCheckBox genreFilter = findViewById(R.id.genreFilter);
@@ -193,14 +176,8 @@ public class CreateSurveyActivity extends AppCompatActivity {
             public void onCheckedStateChangedListener(@NonNull MaterialCheckBox checkBox, int state) {
                 if (state == MaterialCheckBox.STATE_CHECKED) {
                     genreSetting.setVisibility(View.VISIBLE);
-                    try {
-                        filters.put("genre", JSONObject.NULL);
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
                 } else {
                     genreSetting.setVisibility(View.GONE);
-                    filters.remove("genre");
                 }
             }
         });
@@ -218,12 +195,9 @@ public class CreateSurveyActivity extends AppCompatActivity {
 
             @Override
             public void afterTextChanged(Editable s) {
-                if (!s.toString().isEmpty())
-                    try{
-                        filters.put("genre", s.toString());
-                    } catch (JSONException e){
-                        e.printStackTrace();
-                    }
+                if (!s.toString().isEmpty()) {
+                    genreFilterContent=s.toString().split(",\\s*");
+                }
             }
         });
         LinearLayout layout = findViewById(R.id.survey0Layout);
@@ -248,7 +222,7 @@ public class CreateSurveyActivity extends AppCompatActivity {
             }
         });
         TextInputEditText inputNumAnswers = findViewById(R.id.inputNumAnswers);
-        String[] answerAux = inputNumAnswers.getText().toString().split(",");
+        String[] answerAux = inputNumAnswers.getText().toString().split(",\\s*");
         Log.d("DA-Crowdsensing", "Answer: " + Arrays.toString(answerAux) + " at index: " + layout.getTag().toString());
         answers.add(Integer.parseInt(layout.getTag().toString()), answerAux);
         inputNumAnswers.addTextChangedListener(new TextWatcher() {
@@ -359,15 +333,7 @@ public class CreateSurveyActivity extends AppCompatActivity {
                                 }
                                 survey.delete(survey.length() - 1, survey.length());
                                 survey.append("]");
-                                if (filters.has("ubication")) {
-                                    JSONArray location;
-                                    try {
-                                        location = obtainLocation();
-                                    } catch (ConnectionUnavailableException e) {
-                                        throw new RuntimeException(e);
-                                    }
-                                    updateUbication(location);
-                                }
+                                String filters = convertFilters();
                                 //intent.putExtra("message", "Message body");
                                 //intent.putExtra("recipient", "Relations");
                                 //ADDITIONAL DATA FOR NOTIFICATION
@@ -380,7 +346,7 @@ public class CreateSurveyActivity extends AppCompatActivity {
                                 intent.putExtra("script", scriptUrl);
                                 intent.putExtra("survey", survey.toString());
                                 intent.putExtra("callback", Avatar.getAvatar().getOneSignalID());
-                                intent.putExtra("filter", filters.toString());
+                                intent.putExtra("filter", filters);
                                 createPollEntity(Avatar.getAvatar().getOneSignalID(), pollId, survey.toString(), surveyType);
                                 SiddhiAppService.getServiceInstance().sendBroadcast(intent);
                                 Log.i("DA-Crowdsensing", "Sending poll for " + nextRole + " with timeout " + timeout);
@@ -424,8 +390,9 @@ public class CreateSurveyActivity extends AppCompatActivity {
                 LinearLayout.LayoutParams.MATCH_PARENT
         ));
         newSurvey.setHint(R.string.survey_text_content_hint);
-        newSurvey.setInputType(EditorInfo.TYPE_TEXT_FLAG_MULTI_LINE);
+        newSurvey.setRawInputType(EditorInfo.TYPE_TEXT_FLAG_MULTI_LINE);
         newSurvey.setGravity(Gravity.TOP);
+        message.add(Integer.parseInt(mainLayout.getTag().toString()), "");
         newSurvey.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -472,7 +439,7 @@ public class CreateSurveyActivity extends AppCompatActivity {
         inputNumAnswers.setHint(R.string.survey_text_answers_hint);
         inputNumAnswers.setInputType(EditorInfo.TYPE_CLASS_TEXT);
         inputNumAnswers.setText(getString(R.string.default_answers));
-        String[] answerAux = inputNumAnswers.getText().toString().split(",");
+        String[] answerAux = inputNumAnswers.getText().toString().split(",\\s*");
         answers.add(Integer.parseInt(mainLayout.getTag().toString()), answerAux);
         inputNumAnswers.addTextChangedListener(new TextWatcher() {
             @Override
@@ -488,7 +455,7 @@ public class CreateSurveyActivity extends AppCompatActivity {
             @Override
             public void afterTextChanged(Editable s) {
                 if (!s.toString().isEmpty()) {
-                    String[] answerAux = s.toString().split(",");
+                    String[] answerAux = s.toString().split(",\\s*");
                     answers.set(Integer.parseInt(mainLayout.getTag().toString()), answerAux);
                 }
             }
@@ -551,8 +518,38 @@ public class CreateSurveyActivity extends AppCompatActivity {
         return id.toString();
     }
 
-    private JSONArray obtainLocation() throws ConnectionUnavailableException {
-        JSONArray input = new JSONArray();
+    private String convertFilters(){
+        StringBuilder filter = new StringBuilder("{ ");
+        if (rangeFilterContent != 0){
+            double[] ubication;
+            try {
+                ubication = obtainLocation();
+            } catch (ConnectionUnavailableException e) {
+                throw new RuntimeException(e);
+            }
+            Log.d("ScriptExecution", "["+ubication[0]+", "+ubication[1]+"]");
+            filter.append("'ubication' : ").append("{");
+            filter.append("'range' : ").append(rangeFilterContent).append(",");
+            filter.append("'location' : ").append("[").append(ubication[0]).append(",").append(ubication[1]).append("]");
+            filter.append("},");
+        }
+        if (ageFilterContent!= 0)
+            filter.append("'age' : ").append(ageFilterContent).append(",");
+        if (genreFilterContent != null){
+            filter.append("'genre' : [");
+            for (String aux : genreFilterContent){
+                filter.append("'").append(aux).append("', ");
+            }
+            filter.delete(filter.length() - 2, filter.length());
+            filter.append("],");
+        }
+
+        filter.delete(filter.length() - 1, filter.length());
+        filter.append("}");
+        return filter.toString();
+    }
+
+    private double[] obtainLocation() throws ConnectionUnavailableException {
         LocationManager locationManager = (LocationManager) SiddhiAppService.getServiceInstance()
                 .getSystemService(Context.LOCATION_SERVICE);
         if (ActivityCompat.checkSelfPermission(SiddhiAppService.getServiceInstance(),
@@ -565,23 +562,19 @@ public class CreateSurveyActivity extends AppCompatActivity {
         }
         Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
         if(location != null) {
-            try {
-                input.put(location.getLatitude()).put(location.getLongitude());
-            } catch (JSONException e) {
-                throw new RuntimeException(e);
-            }
+            return new double[]{location.getLatitude(), location.getLongitude()};
         }
-        return input;
+        return null;
     }
 
     public void updateUbication(JSONArray location) {
-        JSONObject aux;
-        try{
-            aux = new JSONObject(filters.getString("ubication"));
-            aux.put("location", location);
-            filters.put("ubication", aux.toString());
-        } catch (JSONException e) {
-            throw new RuntimeException(e);
-        }
+//        JSONObject aux;
+//        try{
+//            aux = new JSONObject(filters.getString("ubication"));
+//            aux.put("location", location.toString());
+//            filters.put("ubication", aux.toString());
+//        } catch (JSONException e) {
+//            throw new RuntimeException(e);
+//        }
     }
 }

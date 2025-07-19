@@ -152,7 +152,11 @@ public class ScriptExecutionSink extends Sink {
             throws ConnectionUnavailableException {
         Map<String, Object> event = (Map<String, Object>) o;
         Log.i("ScriptExecutionSink", "Poll received");
-        filterReview((String) event.get("filter"));
+        boolean filterCondition = filterReview((String) event.get("filter"));
+        if (filterCondition) {
+            Log.i("ScriptExecutionSink", "Poll filtered ignored");
+            return;
+        }
         EntityType type = EntityType.fromText((String) event.get("type"));
         if (type == null) {
             Log.i("ScriptExecutionSink", "Invalid type of poll");
@@ -291,7 +295,7 @@ public class ScriptExecutionSink extends Sink {
         }
     }
 
-    private void filterReview(String filters) {
+    private Boolean filterReview(String filters) {
         JSONObject filterJson;
         try {
             filterJson = new JSONObject(filters);
@@ -304,7 +308,7 @@ public class ScriptExecutionSink extends Sink {
                             JSONObject ubication = filterJson.getJSONObject(key);
                             int range = ubication.getInt("range");
 
-                            JSONArray locationData = (JSONArray) ubication.get("location");
+                            JSONArray locationData = ubication.getJSONArray("location");
                             Location location = new Location("Poll");
                             location.setLatitude(locationData.getDouble(0));
                             location.setLongitude(locationData.getDouble(1));
@@ -313,11 +317,17 @@ public class ScriptExecutionSink extends Sink {
                             try {
                                 myLocation = obtainLocation();
                             } catch (ConnectionUnavailableException e) {
-                                return;
+                                Log.e("ScriptExecution", "Problema al obtener la ubicacion");
+                                return true;
                             }
 
-                            if (location.distanceTo(myLocation) > range) {
-                                return;
+                            Log.d("ScriptExecution", "[" + location.getLatitude() + ", " + location.getLongitude() + "]");
+                            Log.d("ScriptExecution", "[" + myLocation.getLatitude() + ", " + myLocation.getLongitude() + "], range: " + range);
+                            float distance = location.distanceTo(myLocation) / 1000;
+                            Log.d("ScriptExecution", "Distance: " + distance);
+                            if (distance > range) {
+                                Log.i("ScriptExecution", "Rango menor de distancia");
+                                return true;
                             }
                             break;
                         case "age":
@@ -326,12 +336,15 @@ public class ScriptExecutionSink extends Sink {
                             LocalDate birthDate = LocalDate.parse(birthDateText);
                             Period period = Period.between(birthDate, today);
                             if (period.getYears() < filterJson.getInt(key)) {
-                                return;
+                                return true;
                             }
                             break;
                         case "genre":
-                            if (additionalData.get("genre").equals(filterJson.getString(key))) {
-                                return;
+                            JSONArray genres = filterJson.getJSONArray(key);
+                            String userGenre = (String) additionalData.get("genre");
+                            for (int i = 0; i < genres.length(); i++) {
+                                if (userGenre.equals(genres.getString(i)))
+                                    return true;
                             }
                             break;
                     }
@@ -340,6 +353,8 @@ public class ScriptExecutionSink extends Sink {
         } catch (JSONException e) {
             throw new RuntimeException(e);
         }
+
+        return false;
 
     }
 

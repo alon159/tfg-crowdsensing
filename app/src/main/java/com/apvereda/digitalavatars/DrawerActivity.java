@@ -320,7 +320,6 @@ public class DrawerActivity extends AppCompatActivity {
             Intent signInIntent = AuthUI.getInstance()
                     .createSignInIntentBuilder()
                     .setAvailableProviders(providers)
-                    .setTheme(R.style.FirebaseUITheme)
                     .build();
             signInLauncher.launch(signInIntent);
         }

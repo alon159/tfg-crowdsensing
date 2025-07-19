@@ -15,63 +15,29 @@
 
         <ImageView
             android:id="@+id/imageView"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_margin="5dp"
             android:src="@drawable/ic_adb_color_24dp"
             android:layout_weight="1"/>
 
         <LinearLayout
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:orientation="vertical"
             android:layout_weight="1">
 
             <TextView
                 android:id="@+id/lbltopicname"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
-                android:lines="1"
-                android:maxLines="1"
                 android:textAlignment="textStart"
                 android:textSize="16dp" />
-            <!--TextView
-                android:id="@+id/lbltriparrow"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="0dp"
-                android:lines="1"
-                android:maxLines="1"
-                android:text=" -> "
-                android:textAlignment="textStart"
-                android:textSize="12dp" /-->
-            <!--TextView
-                android:id="@+id/lbltopicarn"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:layout_marginBottom="10dp"
-                android:lines="1"
-                android:maxLines="1"
-                android:text="XXX -> XXX"
-                android:textAlignment="textStart"
-                android:textSize="16dp" /-->
-
-            <!--TextView
-                android:id="@+id/lbldate"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginRight="10dp"
-                android:text="XX/XX/XXXX"
-                android:layout_marginTop="3dp"
-                android:textIsSelectable="true"
-                android:textAlignment="textStart"
-                android:textSize="10dp" /-->
         </LinearLayout>
         <Button
             android:id="@+id/btndelete"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/answer"
             android:layout_weight="1"/>

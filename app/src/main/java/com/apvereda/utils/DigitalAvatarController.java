@@ -113,7 +113,6 @@ public class DigitalAvatarController {
                         Value v = new Value(//d.getString("uid"),
                                 d.getString("name"), d.getString("type"), d.getArray("privacy").toList().toArray(new String[]{}),
                                 d.getDate("timestamp"), null);
-                        Log.d("DAC", "Name: " + v.getName() + ", Type :" + d.getString("type"));
                         switch (v.getType()) {
                             case "String" -> v.set(d.getString("value"));
                             case "int" -> v.set(d.getInt("value"));

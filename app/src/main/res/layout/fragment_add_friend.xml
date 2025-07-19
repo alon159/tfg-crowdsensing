@@ -20,7 +20,7 @@
             android:fitsSystemWindows="true"
             app:contentScrim="?attr/colorPrimary"
             app:layout_scrollFlags="scroll|exitUntilCollapsed"
-            app:title="Add a friend"
+            app:title="@string/menu_friend"
             app:toolbarId="@+id/toolbar">
 
             <com.google.android.material.appbar.MaterialToolbar

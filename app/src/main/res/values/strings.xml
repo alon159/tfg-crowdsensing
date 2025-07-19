@@ -11,9 +11,9 @@
     <string name="action_readfriends">Añadir amigos desde un archivo</string>
     <string name="menu_profile">Mi perfil</string>
     <string name="menu_results">Mis resultados</string>
-    <string name="menu_friend">Añadir amigos</string>
+    <string name="menu_friend">Añadir contacto</string>
     <string name="menu_home">Inicio</string>
-    <string name="menu_fried_list">Mis amigos</string>
+    <string name="menu_friend_list">Mis contactos</string>
 
     <string name="home_second">Inicio Segundo</string>
     <string name="title_activity_profile">Actividad de perfil</string>

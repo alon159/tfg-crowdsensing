@@ -6,23 +6,23 @@
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/nav_home"
-            android:icon="@drawable/home"
+            android:icon="@drawable/home_24px"
             android:title="@string/menu_home" />
         <item
             android:id="@+id/nav_profile"
-            android:icon="@drawable/profile"
+            android:icon="@drawable/person_24"
             android:title="@string/menu_profile" />
         <item
             android:id="@+id/nav_results"
-            android:icon="@drawable/archive_48"
+            android:icon="@drawable/archive_24"
             android:title="@string/menu_results"/>
         <item
             android:id="@+id/nav_add_friend"
-            android:icon="@drawable/add_friend"
+            android:icon="@drawable/person_add_24"
             android:title="@string/menu_friend" />
         <item
             android:id="@+id/nav_friend_list"
-            android:icon="@drawable/ic_group_black_24dp"
-            android:title="@string/menu_fried_list" />
+            android:icon="@drawable/group_24"
+            android:title="@string/menu_friend_list" />
     </group>
 </menu>
